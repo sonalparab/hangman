@@ -26,6 +26,12 @@ TECHNICAL DESIGN
 ================
 
 Server running at all times.
+    - When server starts, it will grab the list of words:
+
+            /usr/share/dict/american-english
+
+       and choose a random word. We will limit the length to 6 letters or more.
+
     - Subserver forked to process each separate game.
     - Semaphore created for each game allowing only as many players as
        the mode permits.
