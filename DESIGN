@@ -26,15 +26,36 @@ TECHNICAL DESIGN
 ================
 
 Server running at all times.
-    - When server starts, it will grab the list of words:
+    - When server starts, it will read the list of words from the file:
 
             /usr/share/dict/american-english
 
-       and choose a random word. We will limit the length to 6 letters or more.
-
-    - Subserver forked to process each separate game.
+       and create an array of words that have a minimum of 6 letters.    
+    - Subserver forked to process each separate game, picking a random word
+      from the array.
     - Semaphore created for each game allowing only as many players as
        the mode permits.
 
 Client connects over socket. (Sorry unclear understanding of networking)
-    - 
+    - The player will select a mode.
+      - If the mode is multiplayer, the subserver will wait for other clients
+        to connect before starting the game.
+
+Subserver runs the game.
+    - The user is shown the blank spaces for the letters in the word.
+    - The user will be asked to enter a letter and the input will be read.
+      - The guessed letter will be added to the guessed letter array.
+        - If the letter was previously guessed, the user will be asked to
+	  pick again.
+      - The appropriate action will be taken based on whether the letter is
+        in the word.
+	- In competition mode, if the letter was in the word the user will
+	  be given another turn, if not the opposing player will be given
+	  a turn.
+	- In cooperative mode, the next player is given a chancer whether
+	  or not the letter was in the word.
+    - The game continues until the man is hanged or the word is guessed.
+      - When the game is completed, the subserver will exit and the server
+        will ask the user if they wish to play again.
+    - We will have sighandler to prevent sore losers from quitting in the
+      middle of a game out of anger.
