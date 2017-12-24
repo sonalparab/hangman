@@ -59,3 +59,44 @@ Subserver runs the game.
         will ask the user if they wish to play again.
     - We will have sighandler to prevent sore losers from quitting in the
       middle of a game out of anger.
+
+=====
+ROLES
+=====
+Designing "Graphics" (ASCII art)
+    - Sonal
+
+Server Management
+    Word Gen
+        - Helen
+    Semaphores
+        - Helen
+    Game Creation / Server Forking
+        - Sonal
+
+Subserver
+    Processing Hangman Inputs
+        - Helen
+    Competition vs. Cooperative Behavior
+        - Sonal
+
+Signals
+    - Sonal
+
+GUI (If time permits)
+    - Whoever wants to do it
+
+========
+SCHEDULE
+========
+2018-01-03
+Single-player Hangman (word gen & basic "graphics")
+
+2018-01-07
+Basic client-server version with single-player
+
+2018-01-15
+Adding multiplayer functionalities
+
+2018-01-19
+With GUI?
