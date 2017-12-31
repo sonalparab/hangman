@@ -6,7 +6,7 @@ char ** wordlist() {
     FILE *f = fopen(DICTLOCATION, "r");
     // If dict cannot be found, return with error
     if (f == NULL) {
-        return 1;
+        return NULL;
     }
 
     // Allocate memory for all the words

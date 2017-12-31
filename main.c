@@ -2,6 +2,10 @@
 
 int main() {
     char **list = wordlist();
+    if (list == NULL) {
+        printf("Word generation failed...\n");
+        exit(1);
+    }
     int i = 0;
 
     // Writes the word list to a file
