@@ -1,6 +1,8 @@
 #include "word_gen.h"
 
 int main() {
+    srand(time(NULL));
+
     char **list = wordlist();
     if (list == NULL) {
         printf("Word generation failed...\n");
@@ -10,15 +12,23 @@ int main() {
 
     // Writes the word list to a file
     FILE *f = fopen("generated", "w");
-    for (i = 0; list[i]; i++) {
+    for (i = 0; *(list[i]); i++) {
         int results = fputs(list[i], f);
         results = fputs("\n", f);
     }
+    fclose(f);
 
     // Count the number of available words
-    for (i = 0; list[i]; i++);
-    int n = i;
-    printf("len: %d\n", n);
+    printf("len: %d\n", wordlist_len(list));
+
+    // Pick 5 random words
+    char *word;
+    for (i = 0; i < 5; i++) {
+        word = word_pick(list);
+        printf("Random word: %s\n", word);
+        free(word);
+        printf("new len: %d\n", wordlist_len(list));
+    }
 
     // Free all memory used
     for (i = 0; i < MAXDICTLENGTH; i++) {

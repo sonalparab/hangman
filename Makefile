@@ -9,4 +9,4 @@ clean:
 	rm generated
 
 valgrind:
-	valgrind ./temp --leak-check=yes
+	valgrind ./temp --leak-check=yes -tool=memcheck

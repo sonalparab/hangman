@@ -35,8 +35,30 @@ char ** wordlist() {
         }
     }
 
-    // Make sure the list is null-terminated (for ease of use)
-    wordlist[i] = 0;
+    // Make sure the last item in list is null (for ease of use)
+    *(wordlist[i]) = 0;
     printf("[INIT] Word list generated.\n");
+    fclose(f);
     return wordlist;
+}
+
+char * word_pick(char ** list) {
+    int len = wordlist_len(list);
+    int index = rand() % len;
+    char *rand_word = (char *) malloc(sizeof(char) * MAXWORDLENGTH);
+    strcpy(rand_word, list[index]);
+
+    // Remove the word chosen
+    if (index != len - 1) {
+        strcpy(list[index], list[len-1]);
+    }
+    *(list[len-1]) = 0;
+
+    return rand_word;
+}
+
+int wordlist_len(char ** list) {
+    int i = 0;
+    for (i = 0; *(list[i]); i++);
+    return i;
 }
