@@ -49,29 +49,47 @@ void run(char * word){
     if(!b)
       break;
 
-        
-    //print the letters guessed already, if guesses were made
-    i = 0;
-    if(g){
-      printf("Guessed letters: ");
-      for(;i < g;i++)
-	printf("%c ",guessed_letters[i]);
-      printf("\n");
-    }
 
     //UPDATE TO CHECK FOR GUESSES NOT BEING LETTERS
-    
-    //prompt input for a letter
-    printf("Pick a letter: ");
-    scanf("%s",input);
-    //only first character inputed will be counted as letter guess
-    letter = input[0];
-    printf("\n");
-    
-    //update guessed array
-    guessed_letters[g] = letter;
-    g++;
 
+    int k = 1;
+    while(k){
+
+      //print the letters guessed already, if guesses were made
+      i = 0;
+      if(g){
+	printf("Guessed letters: ");
+	for(;i < g;i++)
+	  printf("%c ",guessed_letters[i]);
+	printf("\n");
+      }
+          
+      //prompt input for a letter
+      printf("Pick a new letter: ");
+      scanf("%s",input);
+      //only first character inputed will be counted as letter guess
+      letter = input[0];
+      //update k because a guess was made
+      k = 0;
+      printf("\n");
+
+      i = 0;
+      for(;i < g;i++){
+	//if the letter was already guessed
+	// set k to 1 to prompt guess again
+	if(guessed_letters[i] == letter)
+	  k = 1;
+      }
+
+      //if letter was new guess
+      // update guessed array
+      if(!k){
+	guessed_letters[g] = letter;
+	g++;
+      }
+    }
+    
+    
     
     //compare letter to each letter in word
     int j = 0;
@@ -104,87 +122,87 @@ void run(char * word){
 
 
 
-void print_man(int n){
-  printf("  ____ \n");
-  printf(" |    |\n");
-  //printf(" O    |\n");
-  //printf("\|/   |\n");
-  //printf(" |    |\n");
-  //printf("/ \   |\n");
-  //printf("      |\n");
-  //printf("______|_\n");
-  if (n == 0){
-    printf("      |\n");
-    printf("      |\n");
-    printf("      |\n");
-    printf("      |\n");
-  }
-  if (n == 1){
-    printf(" O    |\n");
-    printf("      |\n");
-    printf("      |\n");
-    printf("      |\n");
-  }
-  if (n == 2){
-    printf(" O    |\n");
+  void print_man(int n){
+    printf("  ____ \n");
     printf(" |    |\n");
-    printf(" |    |\n");
+    //printf(" O    |\n");
+    //printf("\|/   |\n");
+    //printf(" |    |\n");
+    //printf("/ \   |\n");
+    //printf("      |\n");
+    //printf("______|_\n");
+    if (n == 0){
+      printf("      |\n");
+      printf("      |\n");
+      printf("      |\n");
+      printf("      |\n");
+    }
+    if (n == 1){
+      printf(" O    |\n");
+      printf("      |\n");
+      printf("      |\n");
+      printf("      |\n");
+    }
+    if (n == 2){
+      printf(" O    |\n");
+      printf(" |    |\n");
+      printf(" |    |\n");
+      printf("      |\n");
+    }
+    if (n == 3){
+      printf(" O    |\n");
+      printf("\\|    |\n");
+      printf(" |    |\n");
+      printf("      |\n");
+    }
+    if (n == 4){
+      printf(" O    |\n");
+      printf("\\|/   |\n");
+      printf(" |    |\n");
+      printf("      |\n");
+    }
+    if (n == 5){
+      printf(" O    |\n");
+      printf("\\|/   |\n");
+      printf(" |    |\n");
+      printf("/     |\n");
+    }
+    if (n == 6){
+      printf(" O    |\n");
+      printf("\\|/   |\n");
+      printf(" |    |\n");
+      printf("/ \\   |\n");
+    }
     printf("      |\n");
+    printf("______|_\n");
   }
-  if (n == 3){
-    printf(" O    |\n");
-    printf("\\|    |\n");
-    printf(" |    |\n");
-    printf("      |\n");
-  }
-  if (n == 4){
-    printf(" O    |\n");
-    printf("\\|/   |\n");
-    printf(" |    |\n");
-    printf("      |\n");
-  }
-  if (n == 5){
-    printf(" O    |\n");
-    printf("\\|/   |\n");
-    printf(" |    |\n");
-    printf("/     |\n");
-  }
-  if (n == 6){
-    printf(" O    |\n");
-    printf("\\|/   |\n");
-    printf(" |    |\n");
-    printf("/ \\   |\n");
-  }
-  printf("      |\n");
-  printf("______|_\n");
-}
 
 
-int main(){
-  /*int main (int argc, char *argv[]){
+  int main(){
+    /*int main (int argc, char *argv[]){
 
   
-    char letter;
-    printf("Guess a letter: ");
-    scanf("%c", letter);
+      char letter;
+      printf("Guess a letter: ");
+      scanf("%c", letter);
 
-    print_man(0);
-    printf("\n");
-    print_man(1);
-    printf("\n");
-    print_man(2);
-    printf("\n");
-    print_man(3);
-    printf("\n");
-    print_man(4);
-    printf("\n");
-    print_man(5);
-    printf("\n");
-    print_man(6);
-    printf("\n");*/
+      print_man(0);
+      printf("\n");
+      print_man(1);
+      printf("\n");
+      print_man(2);
+      printf("\n");
+      print_man(3);
+      printf("\n");
+      print_man(4);
+      printf("\n");
+      print_man(5);
+      printf("\n");
+      print_man(6);
+      printf("\n");*/
 
-  run("fabulous");
+    run("fabulous");
   
 
  
-}
+  }
