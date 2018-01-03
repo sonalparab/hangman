@@ -9,7 +9,7 @@ char * blank_array(int length){
   return array;
 }
 
-void run(char * word){
+void run_game(char * word){
   int wrong_guesses = 0;
   int len = strlen(word);
   //array for guessing the word, intially blank
@@ -177,7 +177,7 @@ void run(char * word){
   }
 
 
-  int main(){
+/*  int main(){
     /*int main (int argc, char *argv[]){
 
   
@@ -200,8 +200,8 @@ void run(char * word){
       print_man(6);
       printf("\n");*/
 
-    run("fabulous");
+//run_game("fabulous");
   
 
  
-  }
+//}*/

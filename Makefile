@@ -1,5 +1,5 @@
 all:
-	gcc -o temp main.c word_gen.c -g
+	gcc -o temp main.c word_gen.c game.c -g
 
 run:
 	./temp

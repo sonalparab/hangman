@@ -1,4 +1,5 @@
 #include "word_gen.h"
+#include "game.h"
 
 int main() {
     srand(time(NULL));
@@ -26,6 +27,8 @@ int main() {
     for (i = 0; i < 5; i++) {
         word = word_pick(list);
         printf("Random word: %s\n", word);
+	//trying the game
+	run_game(word);
         free(word);
         printf("new len: %d\n", wordlist_len(list));
     }

@@ -10,6 +10,6 @@
 
 char * blank_array(int length);
 
-void run(char * word);
+void run_game(char * word);
 
 void print_man(int n);
