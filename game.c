@@ -81,14 +81,13 @@ void run(char * word){
 	  k = 1;
       }
 
-      //if letter was new guess
-      // update guessed array
-      if(!k){
-	guessed_letters[g] = letter;
-	g++;
-      }
+      
     }
+
+    //update guessed_letters array with new guess
     
+    guessed_letters[g] = letter;
+    g++;
     
     
     //compare letter to each letter in word
