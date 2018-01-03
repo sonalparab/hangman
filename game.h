@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <time.h>
 
+char * blank_array(int length);
+
 void run(char * word);
 
 void print_man(int n);
