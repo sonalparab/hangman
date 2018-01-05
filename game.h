@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <time.h>
+#include <ctype.h>
 
 char * blank_array(int length);
 

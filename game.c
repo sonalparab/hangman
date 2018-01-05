@@ -73,12 +73,26 @@ void run_game(char * word){
       k = 0;
       printf("\n");
 
+      if(strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL){
+	printf("Please input a lowercase letter next time\n");
+	letter = tolower(letter);
+      }
+      
+      //if the guess was not a letter
+      if(strchr("abcdefghijklmnopqrstuvwxyz",letter) == NULL){
+	printf("Not a valid letter\n");
+	k = 1;
+      }
+
+           
       i = 0;
-      for(;i < g;i++){
-	//if the letter was already guessed
-	// set k to 1 to prompt guess again
-	if(guessed_letters[i] == letter)
-	  k = 1;
+      if(!k){
+	for(;i < g;i++){
+	  //if the letter was already guessed
+	  // set k to 1 to prompt guess again
+	  if(guessed_letters[i] == letter)
+	    k = 1;
+	}
       }
 
       
@@ -177,8 +191,8 @@ void run_game(char * word){
   }
 
 
-/*  int main(){
-    /*int main (int argc, char *argv[]){
+  /*  int main(){
+      /*int main (int argc, char *argv[]){
 
   
       char letter;
@@ -200,8 +214,8 @@ void run_game(char * word){
       print_man(6);
       printf("\n");*/
 
-//run_game("fabulous");
+  //run_game("fabulous");
   
 
  
-//}*/
+  //}*/
