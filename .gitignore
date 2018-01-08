@@ -3,3 +3,5 @@
 *.o
 temp
 generated
+server
+client
