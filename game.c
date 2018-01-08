@@ -1,15 +1,16 @@
 #include "game.h"
+#include "pipe_networking.h"
 
 char * blank_array(int length){
     char * array = calloc(length,sizeof(char));
     int i = 0;
-    for(;i < length; i++){
+    for (;i < length; i++){
         array[i] = '_';
     }
     return array;
 }
 
-void run_game(char * word){
+void run_game(char * word, int to_client, int from_client){
     int wrong_guesses = 0;
     int len = strlen(word);
     //array for guessing the word, intially blank
@@ -20,18 +21,23 @@ void run_game(char * word){
     char letter;
     //array and counter for guessed letters
     char * guessed_letters = calloc(26,sizeof(char));
+    // string containing hang man
+    char * man;
+    // for messages to be sent to client
+    char * message = (char *) malloc(64 * sizeof(char));
     int g = 0;
-    while(1){
+    while (1){
 
         //print the man
-        print_man(wrong_guesses);
-        printf("\n\n");
+        man = generate_man(wrong_guesses);
+        // sorta dangerous to write size below?
+        write(to_client, man, sizeof(char) * 100);
+        printf("[subserver] Sent man\n");
 
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
-        for(;i < len; i++)
-            printf(" %c",guessing_array[i]);
-        printf("\n");
+        write(to_client, guessing_array, sizeof(guessing_array));
+        printf("[subserver] Sent guessing_array\n");
 
 
         //check for blank spaces in guessing_array
@@ -39,59 +45,62 @@ void run_game(char * word){
         i = 0;
         //boolean for checking blank spaces
         int b = 0;
-        for(;i < len; i++){
-            if(guessing_array[i] == '_')
+        for (;i < len; i++){
+            if (guessing_array[i] == '_') {
                 b = 1;
+            }
         }
 
         //if b is 0, there were no blank spaces
         // word was already guessed, break
-        if(!b)
+        if (!b) {
             break;
-
+        }
 
         //UPDATE TO CHECK FOR GUESSES NOT BEING LETTERS
 
         int k = 1;
-        while(k){
+        while (k){
 
             //print the letters guessed already, if guesses were made
             i = 0;
-            if(g){
-                printf("Guessed letters: ");
-                for(;i < g;i++)
-                    printf("%c ",guessed_letters[i]);
-                printf("\n");
+            if (g){
+                write(to_client, guessed_letters, sizeof(guessed_letters));
+                printf("[subserver] Sent guessed letters\n");
             }
 
+            message = PROMPT;
+            write(to_client, PROMPT, sizeof(message));
             //prompt input for a letter
-            printf("Pick a new letter: ");
-            scanf("%s",input);
+            read(from_client ,input, sizeof(input));
+            printf("[subserver] received input {%s}\n", input);
             //only first character inputed will be counted as letter guess
             letter = input[0];
             //update k because a guess was made
             k = 0;
-            printf("\n");
 
-            if(strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL){
-                printf("Please input a lowercase letter next time\n");
+            if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL){
+                message = "Please input a lowercase letter next time\n";
+                write(to_client, message, sizeof(message));
                 letter = tolower(letter);
             }
 
             //if the guess was not a letter
-            if(strchr("abcdefghijklmnopqrstuvwxyz",letter) == NULL){
-                printf("Not a valid letter\n");
+            if (strchr("abcdefghijklmnopqrstuvwxyz",letter) == NULL){
+                message = "Not a valid letter\n";
+                write(to_client, message, sizeof(message));
                 k = 1;
             }
 
 
             i = 0;
-            if(!k){
-                for(;i < g;i++){
+            if (!k){
+                for (;i < g;i++){
                     //if the letter was already guessed
                     // set k to 1 to prompt guess again
-                    if(guessed_letters[i] == letter)
+                    if (guessed_letters[i] == letter) {
                         k = 1;
+                    }
                 }
             }
 
@@ -122,69 +131,78 @@ void run_game(char * word){
 
         //check if player lost
         if(wrong_guesses == 6){
-            print_man(wrong_guesses);
-            printf("Sorry you lose!\n");
+            man = generate_man(wrong_guesses);
+            message = "Sorry, you lose!\n";
+            write(to_client, message, sizeof(message));
+            free(message);
             return;
         }
 
     }
-    printf("You win!\n");
+    message = "You win!\n";
+    write(to_client, message, sizeof(message));
+    free(message);
     return;
 }
 
-void print_man(int n){
-    printf("  ____ \n");
-    printf(" |    |\n");
-    //printf(" O    |\n");
-    //printf("\|/   |\n");
-    //printf(" |    |\n");
-    //printf("/ \   |\n");
-    //printf("      |\n");
-    //printf("______|_\n");
-    if (n == 0){
-        printf("      |\n");
-        printf("      |\n");
-        printf("      |\n");
-        printf("      |\n");
+char * generate_man(int n){
+    char * man = (char *)calloc(100, sizeof(char));
+    man =        "  ____ \n";
+    size_t size = 100 * sizeof(char);
+    size_t line_len = strlen("       \n");
+    strncat(man, " |    |\n", size -= line_len);
+    //    printf(" O    |\n");
+    //    printf("\|/   |\n");
+    //    printf(" |    |\n");
+    //    printf("/ \   |\n");
+    //    printf("      |\n");
+    //    printf("______|_\n");
+    if (n == 0) {
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
     }
-    if (n == 1){
-        printf(" O    |\n");
-        printf("      |\n");
-        printf("      |\n");
-        printf("      |\n");
+    if (n == 1) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
     }
-    if (n == 2){
-        printf(" O    |\n");
-        printf(" |    |\n");
-        printf(" |    |\n");
-        printf("      |\n");
+    if (n == 2) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
     }
-    if (n == 3){
-        printf(" O    |\n");
-        printf("\\|    |\n");
-        printf(" |    |\n");
-        printf("      |\n");
+    if (n == 3) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|    |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
     }
-    if (n == 4){
-        printf(" O    |\n");
-        printf("\\|/   |\n");
-        printf(" |    |\n");
-        printf("      |\n");
+    if (n == 4) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|/   |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
     }
-    if (n == 5){
-        printf(" O    |\n");
-        printf("\\|/   |\n");
-        printf(" |    |\n");
-        printf("/     |\n");
+    if (n == 5) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|/   |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "/     |\n", size-= line_len);
     }
-    if (n == 6){
-        printf(" O    |\n");
-        printf("\\|/   |\n");
-        printf(" |    |\n");
-        printf("/ \\   |\n");
+    if (n == 6) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|/   |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "/ \\   |\n", size-= line_len);
     }
-    printf("      |\n");
-    printf("______|_\n");
+    strncat(man, "      |\n", size-= line_len);
+    strncat(man, "______|_\n", size-= line_len);
+    printf("%s", man);
+    return man;
 }
 
 

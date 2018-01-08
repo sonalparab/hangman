@@ -1,12 +1,14 @@
 all:
-	gcc -o temp main.c word_gen.c game.c -g
+	gcc -o server main.c game.c pipe_networking.c word_gen.c -g
+	gcc -o client client.c pipe_networking.c -g
 
-run:
-	./temp
+server:
+	./server
+
+client:
+	./client
 
 clean:
-	rm temp
+	rm server
+	rm client
 	rm generated
-
-valgrind:
-	valgrind ./temp --leak-check=yes -tool=memcheck

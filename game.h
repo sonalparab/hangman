@@ -9,8 +9,10 @@
 #include <time.h>
 #include <ctype.h>
 
-char * blank_array(int length);
+#define PROMPT "Pick a letter: "
 
-void run_game(char * word);
+char * blank_array(int);
 
-void print_man(int n);
+void run_game(char *, int, int);
+
+char * generate_man(int);

@@ -47,6 +47,7 @@ char * word_pick(char ** list) {
     int index = rand() % len;
     char *rand_word = (char *) malloc(sizeof(char) * MAXWORDLENGTH);
     strcpy(rand_word, list[index]);
+    lower(rand_word);
 
     // Remove the word chosen
     if (index != len - 1) {
@@ -61,4 +62,13 @@ int wordlist_len(char ** list) {
     int i = 0;
     for (i = 0; *(list[i]); i++);
     return i;
+}
+
+unsigned char * lower(char *str) {
+    unsigned char *my_str = (unsigned char *) str;
+    int i = 0;
+    for (; my_str[i]; i++) {
+        my_str[i] = tolower(my_str[i]);
+    }
+    return my_str;
 }
