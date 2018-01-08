@@ -24,21 +24,27 @@ void run_game(char * word, int to_client, int from_client){
     // string containing hang man
     char * man;
     // for messages to be sent to client
-    char * message = (char *) malloc(64 * sizeof(char));
+    char message[BUFFER_SIZE];
     int g = 0;
+    printf("[subserver] running game...\n");
     while (1){
 
         //print the man
-        man = generate_man(wrong_guesses);
         // sorta dangerous to write size below?
-        write(to_client, man, sizeof(char) * 100);
+        /* man = generate_man(wrong_guesses); */
+        /* write(to_client, man, sizeof(char) * 100); */
+        man = (char *) malloc (100);
+        sprintf(man, "%d", wrong_guesses);
+        write(to_client, man, sizeof(man));
+        message[0] = 0;
         printf("[subserver] Sent man\n");
+        free(man);
+        sleep(1);
 
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
         write(to_client, guessing_array, sizeof(guessing_array));
         printf("[subserver] Sent guessing_array\n");
-
 
         //check for blank spaces in guessing_array
         // to see if the word was fully guessed already
@@ -48,6 +54,7 @@ void run_game(char * word, int to_client, int from_client){
         for (;i < len; i++){
             if (guessing_array[i] == '_') {
                 b = 1;
+                break;
             }
         }
 
@@ -69,8 +76,10 @@ void run_game(char * word, int to_client, int from_client){
                 printf("[subserver] Sent guessed letters\n");
             }
 
-            message = PROMPT;
-            write(to_client, PROMPT, sizeof(message));
+            strcpy(message,PROMPT);
+            write(to_client, message, sizeof(message));
+            message[0] = 0;
+            printf("[subserver] waiting for input\n");
             //prompt input for a letter
             read(from_client ,input, sizeof(input));
             printf("[subserver] received input {%s}\n", input);
@@ -80,18 +89,19 @@ void run_game(char * word, int to_client, int from_client){
             k = 0;
 
             if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL){
-                message = "Please input a lowercase letter next time\n";
+                strcpy(message,"Please input a lowercase letter next time\n");
                 write(to_client, message, sizeof(message));
+                message[0] = 0;
                 letter = tolower(letter);
             }
 
             //if the guess was not a letter
             if (strchr("abcdefghijklmnopqrstuvwxyz",letter) == NULL){
-                message = "Not a valid letter\n";
+                strcpy(message,"Not a valid letter\n");
                 write(to_client, message, sizeof(message));
+                message[0] = 0;
                 k = 1;
             }
-
 
             i = 0;
             if (!k){
@@ -103,8 +113,6 @@ void run_game(char * word, int to_client, int from_client){
                     }
                 }
             }
-
-
         }
 
         //update guessed_letters array with new guess
@@ -132,25 +140,26 @@ void run_game(char * word, int to_client, int from_client){
         //check if player lost
         if(wrong_guesses == 6){
             man = generate_man(wrong_guesses);
-            message = "Sorry, you lose!\n";
+            strcpy(message, "Sorry, you lose!\n");
             write(to_client, message, sizeof(message));
-            free(message);
+            message[0] = 0;
             return;
         }
-
     }
-    message = "You win!\n";
+
+    strcpy(message,"You win!\n");
     write(to_client, message, sizeof(message));
-    free(message);
+    message[0] = 0;
     return;
 }
 
 char * generate_man(int n){
+    printf("[subserver] generating man...\n");
     char * man = (char *)calloc(100, sizeof(char));
-    man =        "  ____ \n";
     size_t size = 100 * sizeof(char);
     size_t line_len = strlen("       \n");
-    strncat(man, " |    |\n", size -= line_len);
+    strcpy(man, "\n  ____ \n");
+    strncat(man, " |    |\n", size -= line_len + 1);
     //    printf(" O    |\n");
     //    printf("\|/   |\n");
     //    printf(" |    |\n");
@@ -201,7 +210,7 @@ char * generate_man(int n){
     }
     strncat(man, "      |\n", size-= line_len);
     strncat(man, "______|_\n", size-= line_len);
-    printf("%s", man);
+    /* printf("%s", man); */
     return man;
 }
 
@@ -209,25 +218,25 @@ char * generate_man(int n){
 /*int main(){
 /*int main (int argc, char *argv[]){
 
-    char letter;
-    printf("Guess a letter: ");
-    scanf("%c", letter);
+char letter;
+printf("Guess a letter: ");
+scanf("%c", letter);
 
-    print_man(0);
-    printf("\n");
-    print_man(1);
-    printf("\n");
-    print_man(2);
-    printf("\n");
-    print_man(3);
-    printf("\n");
-    print_man(4);
-    printf("\n");
-    print_man(5);
-    printf("\n");
-    print_man(6);
-    printf("\n");*/
+print_man(0);
+printf("\n");
+print_man(1);
+printf("\n");
+print_man(2);
+printf("\n");
+print_man(3);
+printf("\n");
+print_man(4);
+printf("\n");
+print_man(5);
+printf("\n");
+print_man(6);
+printf("\n");*/
 
-    //run_game("fabulous");
+//run_game("fabulous");
 
 //}*/

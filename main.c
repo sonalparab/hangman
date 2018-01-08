@@ -47,8 +47,9 @@ int main() {
 void subserver(int from_client) {
     int to_client = server_connect(from_client);
     char buffer[BUFFER_SIZE];
-    while (read(from_client, buffer, sizeof(buffer))) {
-        printf("[SERVER %d] received: %s\n", getpid(), buffer);
+    /* while (read(from_client, buffer, sizeof(buffer))) { */
+    while (1) {
+        /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
         process(buffer, to_client, from_client);
     }
 }
