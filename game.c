@@ -40,7 +40,7 @@ void run_game(char * word, int to_client, int from_client){
         write(to_client, man, sizeof(man));
         printf("[subserver] Sent %s\n", man);
         free(man);
-        test = read(from_client, buffer, sizeof(buffer));
+        test = read(from_client, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 1!");
         }
@@ -50,7 +50,7 @@ void run_game(char * word, int to_client, int from_client){
         int i = 0;
         write(to_client, guessing_array, sizeof(guessing_array));
         printf("[subserver] Sent %s\n", guessing_array);
-        test = read(from_client, buffer, sizeof(buffer));
+        test = read(from_client, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
         }
@@ -84,7 +84,7 @@ void run_game(char * word, int to_client, int from_client){
             if (g){
                 write(to_client, guessed_letters, sizeof(guessed_letters));
                 printf("[subserver] Sent %s\n", guessed_letters);
-                test = read(from_client, buffer, sizeof(buffer));
+                test = read(from_client, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 3!");
                 }
@@ -92,7 +92,7 @@ void run_game(char * word, int to_client, int from_client){
             }
 
             strcpy(message,PROMPT);
-            write(to_client, message, sizeof(message));
+            write(to_client, message, BUFFER_SIZE);
             printf("[subserver] Sent %s\n", message);
             message = zero_heap(message, BUFFER_SIZE);
             printf("[subserver] waiting for input");
@@ -107,9 +107,9 @@ void run_game(char * word, int to_client, int from_client){
 
             if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL){
                 strcpy(message,"Please input a lowercase letter next time");
-                write(to_client, message, sizeof(message));
+                write(to_client, message, BUFFER_SIZE);
                 printf("[subserver] Sent %s\n", message);
-                test = read(from_client, buffer, sizeof(buffer));
+                test = read(from_client, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 4!");
                 }
@@ -121,9 +121,9 @@ void run_game(char * word, int to_client, int from_client){
             //if the guess was not a letter
             if (strchr("abcdefghijklmnopqrstuvwxyz",letter) == NULL){
                 strcpy(message,"Not a valid letter");
-                write(to_client, message, sizeof(message));
+                write(to_client, message, BUFFER_SIZE);
                 printf("[subserver] Sent %s\n", message);
-                test = read(from_client, buffer, sizeof(buffer));
+                test = read(from_client, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 5!");
                 }
@@ -170,9 +170,9 @@ void run_game(char * word, int to_client, int from_client){
         if(wrong_guesses == 6){
             man = generate_man(wrong_guesses);
             strcpy(message, "Sorry, you lose!");
-            write(to_client, message, sizeof(message));
+            write(to_client, message, BUFFER_SIZE);
             printf("[subserver] Sent %s\n", message);
-            test = read(from_client, buffer, sizeof(buffer));
+            test = read(from_client, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 6!");
             }
@@ -183,9 +183,9 @@ void run_game(char * word, int to_client, int from_client){
     }
 
     strcpy(message,"You win!");
-    write(to_client, message, sizeof(message));
+    write(to_client, message, BUFFER_SIZE);
     printf("[subserver] Sent %s\n", message);
-    test = read(from_client, buffer, sizeof(buffer));
+    test = read(from_client, buffer, BUFFER_SIZE);
     if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 7!");
     }

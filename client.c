@@ -10,18 +10,18 @@ int main() {
     from_server = client_handshake( &to_server );
 
     printf("[client] reading...");
-    while (read(from_server, buffer, sizeof(buffer))) {
+    while (read(from_server, buffer, BUFFER_SIZE)) {
         if (strcmp(buffer, PROMPT) == 0) {
             printf(PROMPT);
-            fgets(buffer, sizeof(buffer), stdin);
+            fgets(buffer, BUFFER_SIZE, stdin);
             *strchr(buffer, '\n') = 0;
-            write(to_server, buffer, sizeof(buffer));
+            write(to_server, buffer, BUFFER_SIZE);
             printf("[client] wrote input: [%s]\n", buffer);
         } else {
             /* *strchr(buffer, '\n') = 0; */
             printf("received: [%s]\n", buffer);
             strcpy(buffer, ACK);
-            write(to_server, buffer, sizeof(buffer));
+            write(to_server, buffer, BUFFER_SIZE);
             printf("[client] reading..\n");
         }
         buffer[0] = 0;
