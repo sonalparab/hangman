@@ -131,3 +131,8 @@ int client_handshake(int *to_server) {
 
     return from_server;
 }
+
+char * zero_heap(char *buffer, int size) {
+    free(buffer);
+    buffer = (char *) calloc(size, sizeof(char));
+}

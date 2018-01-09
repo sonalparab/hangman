@@ -5,7 +5,7 @@ int main() {
 
     int to_server;
     int from_server;
-    char buffer[BUFFER_SIZE];
+    char * buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
 
     from_server = client_handshake( &to_server );
 

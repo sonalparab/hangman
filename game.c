@@ -24,8 +24,9 @@ void run_game(char * word, int to_client, int from_client){
     // string containing hang man
     char * man;
     // for messages to be sent to client
-    char message[BUFFER_SIZE];
-    char buffer[BUFFER_SIZE];
+    char * message = (char *) calloc(BUFFER_SIZE, sizeof(char));
+    char * buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
+    int test;
     int g = 0;
     printf("[subserver] running game...\n");
     while (1){
@@ -39,17 +40,21 @@ void run_game(char * word, int to_client, int from_client){
         write(to_client, man, sizeof(man));
         printf("[subserver] Sent %s\n", man);
         free(man);
-        if (!read(from_client, buffer, sizeof(buffer))) {
+        test = read(from_client, buffer, sizeof(buffer));
+        if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 1!");
         }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
 
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
         write(to_client, guessing_array, sizeof(guessing_array));
         printf("[subserver] Sent %s\n", guessing_array);
-        if (!read(from_client, buffer, sizeof(buffer))) {
+        test = read(from_client, buffer, sizeof(buffer));
+        if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
         }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
 
         //check for blank spaces in guessing_array
         // to see if the word was fully guessed already
@@ -79,15 +84,17 @@ void run_game(char * word, int to_client, int from_client){
             if (g){
                 write(to_client, guessed_letters, sizeof(guessed_letters));
                 printf("[subserver] Sent %s\n", guessed_letters);
-                if (!read(from_client, buffer, sizeof(buffer))) {
+                test = read(from_client, buffer, sizeof(buffer));
+                if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 3!");
                 }
+                buffer = zero_heap(buffer, BUFFER_SIZE);
             }
 
             strcpy(message,PROMPT);
             write(to_client, message, sizeof(message));
             printf("[subserver] Sent %s\n", message);
-            message[0] = 0;
+            message = zero_heap(message, BUFFER_SIZE);
             printf("[subserver] waiting for input");
             //prompt input for a letter
             read(from_client, input, sizeof(input));
@@ -102,10 +109,12 @@ void run_game(char * word, int to_client, int from_client){
                 strcpy(message,"Please input a lowercase letter next time");
                 write(to_client, message, sizeof(message));
                 printf("[subserver] Sent %s\n", message);
-                if (!read(from_client, buffer, sizeof(buffer))) {
+                test = read(from_client, buffer, sizeof(buffer));
+                if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 4!");
                 }
-                message[0] = 0;
+                buffer = zero_heap(buffer, BUFFER_SIZE);
+                message = zero_heap(message, BUFFER_SIZE);
                 letter = tolower(letter);
             }
 
@@ -114,10 +123,12 @@ void run_game(char * word, int to_client, int from_client){
                 strcpy(message,"Not a valid letter");
                 write(to_client, message, sizeof(message));
                 printf("[subserver] Sent %s\n", message);
-                if (!read(from_client, buffer, sizeof(buffer))) {
+                test = read(from_client, buffer, sizeof(buffer));
+                if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 5!");
                 }
-                message[0] = 0;
+                buffer = zero_heap(buffer, BUFFER_SIZE);
+                message = zero_heap(message, BUFFER_SIZE);
                 k = 1;
             }
 
@@ -161,10 +172,12 @@ void run_game(char * word, int to_client, int from_client){
             strcpy(message, "Sorry, you lose!");
             write(to_client, message, sizeof(message));
             printf("[subserver] Sent %s\n", message);
-            if (!read(from_client, buffer, sizeof(buffer))) {
+            test = read(from_client, buffer, sizeof(buffer));
+            if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 6!");
             }
-            message[0] = 0;
+            buffer = zero_heap(buffer, BUFFER_SIZE);
+            message = zero_heap(message, BUFFER_SIZE);
             return;
         }
     }
@@ -172,10 +185,12 @@ void run_game(char * word, int to_client, int from_client){
     strcpy(message,"You win!");
     write(to_client, message, sizeof(message));
     printf("[subserver] Sent %s\n", message);
-    if (!read(from_client, buffer, sizeof(buffer))) {
+    test = read(from_client, buffer, sizeof(buffer));
+    if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 7!");
     }
-    message[0] = 0;
+    buffer = zero_heap(buffer, BUFFER_SIZE);
+    message = zero_heap(message, BUFFER_SIZE);
     return;
 }
 
