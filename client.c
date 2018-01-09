@@ -15,13 +15,15 @@ int main() {
             printf(PROMPT);
             fgets(buffer, sizeof(buffer), stdin);
             *strchr(buffer, '\n') = 0;
-            printf("[client] Input: [%s]\n", buffer);
             write(to_server, buffer, sizeof(buffer));
+            printf("[client] wrote input: [%s]\n", buffer);
         } else {
             /* *strchr(buffer, '\n') = 0; */
             printf("received: [%s]\n", buffer);
-            buffer[0] = 0;
+            strcpy(buffer, ACK);
+            write(to_server, buffer, sizeof(buffer));
             printf("[client] reading..\n");
         }
+        buffer[0] = 0;
     }
 }
