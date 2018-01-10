@@ -41,6 +41,11 @@ void run_game(char * word, int to_client, int from_client){
         printf("[subserver] Sent %s\n", man);
         free(man);
         test = read(from_client, buffer, BUFFER_SIZE);
+
+	//why is it -72?
+	//the buffer is empty??
+	printf("%s\n",buffer);
+	
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 1!");
         }
