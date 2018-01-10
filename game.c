@@ -31,6 +31,7 @@ void run_game(char * word, int to_client, int from_client){
     printf("[subserver] running game...\n");
     while (1){
 
+      
         //print the man
         // sorta dangerous to write size below?
         /* man = generate_man(wrong_guesses); */
@@ -41,6 +42,7 @@ void run_game(char * word, int to_client, int from_client){
         printf("[subserver] Sent %s\n", man);
         free(man);
         test = read(from_client, buffer, BUFFER_SIZE);
+	
 
 	//why is it -72?
 	//the buffer is empty??
@@ -50,7 +52,7 @@ void run_game(char * word, int to_client, int from_client){
             printf("Error 1!");
         }
         buffer = zero_heap(buffer, BUFFER_SIZE);
-
+	
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
         write(to_client, guessing_array, sizeof(guessing_array));

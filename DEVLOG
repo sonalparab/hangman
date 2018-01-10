@@ -11,9 +11,17 @@ Finish generating words, with methods for use in the actual game such as
 picking words
     * Also, plug memory leaks
 
-SONAL'S STUFF
-SONAL'S STUFF
-SONAL'S STUFF
+parabS -- 2018-01-02 18:37
+**************************
+Hangman art
+
+parabS -- 2018-01-03 22:40
+**************************
+Basic hangman game
+
+parabS -- 2018-01-04 20:56
+**************************
+Some error catching in hangman game
 
 yeH -- 2018-01-07 22:34
 **************************
@@ -31,3 +39,7 @@ More debugging of forking server/client
 Ran into lots of issues, such as reading strange things
     * Kind of works
 
+parabS -- 2018-01-09 23:57
+**************************
+Debugging server/client
+    *Still kind of works
