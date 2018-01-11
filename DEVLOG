@@ -48,3 +48,8 @@ parabS -- 2018-01-11 00:31
 **************************
 Debugging server/client
     *Mostly works, but still trouble with sending errors
+
+yeH -- 2018-01-11 09:40
+**************************
+Add more descriptive prints for the subserver
+    * Issue where the guessing array is not updated

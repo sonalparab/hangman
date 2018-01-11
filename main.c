@@ -4,8 +4,6 @@
 #include "main.h"
 
 int main() {
-    srand(time(NULL));
-
     list = wordlist();
     if (list == NULL) {
         printf("Word generation failed...\n");
@@ -46,6 +44,7 @@ int main() {
 
 void subserver(int from_client) {
     int to_client = server_connect(from_client);
+    srand(time(NULL));
     char buffer[BUFFER_SIZE];
     /* while (read(from_client, buffer, sizeof(buffer))) { */
     while (1) {
