@@ -31,37 +31,40 @@ void run_game(char * word, int to_client, int from_client){
     printf("[subserver] running game...\n");
     while (1){
 
-      
         //print the man
         // sorta dangerous to write size below?
         /* man = generate_man(wrong_guesses); */
         /* write(to_client, man, sizeof(char) * 100); */
-        man = (char *) malloc (8);
+        man = (char *)calloc(2,sizeof(char));
         sprintf(man, "%d", wrong_guesses);
         write(to_client, man, sizeof(man));
         printf("[subserver] Sent %s\n", man);
         free(man);
         test = read(from_client, buffer, BUFFER_SIZE);
-	
 
 	//why is it -72?
 	//the buffer is empty??
+	//k it works now but im keeping this in just incase
 	printf("%s\n",buffer);
-	
-        if (test == -1 || strcmp(buffer, ACK)) {
+
+	if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 1!");
         }
         buffer = zero_heap(buffer, BUFFER_SIZE);
+
+	
 	
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
-        write(to_client, guessing_array, sizeof(guessing_array));
-        printf("[subserver] Sent %s\n", guessing_array);
-        test = read(from_client, buffer, BUFFER_SIZE);
-        if (test == -1 || strcmp(buffer, ACK)) {
+	if(guessing_array[0] != 0){
+	  write(to_client, guessing_array, len);//sizeof(guessing_array));
+	  printf("[subserver] Sent %s\n", guessing_array);
+	  test = read(from_client, buffer, BUFFER_SIZE);
+	  if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
-        }
-        buffer = zero_heap(buffer, BUFFER_SIZE);
+	  }
+	  buffer = zero_heap(buffer, BUFFER_SIZE);
+	}
 
         //check for blank spaces in guessing_array
         // to see if the word was fully guessed already
@@ -86,6 +89,8 @@ void run_game(char * word, int to_client, int from_client){
         int k = 1;
         while (k){
 
+
+	    
             //print the letters guessed already, if guesses were made
             i = 0;
             if (g){
@@ -98,14 +103,17 @@ void run_game(char * word, int to_client, int from_client){
                 buffer = zero_heap(buffer, BUFFER_SIZE);
             }
 
-            strcpy(message,PROMPT);
+	    
+            strcpy(message,"Pick a letter: ");    
             write(to_client, message, BUFFER_SIZE);
             printf("[subserver] Sent %s\n", message);
-            message = zero_heap(message, BUFFER_SIZE);
-            printf("[subserver] waiting for input");
+            message = zero_heap(message, BUFFER_SIZE);	   
+
+	    printf("[subserver] waiting for input\n");
             //prompt input for a letter
-            read(from_client, input, sizeof(input));
+            test = read(from_client, input, sizeof(input));
             printf("[subserver] received input {%s}\n", input);
+	    
             //only first character inputed will be counted as letter guess
             letter = input[0];
             printf("letter %c\n", letter);

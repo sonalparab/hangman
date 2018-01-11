@@ -43,3 +43,8 @@ parabS -- 2018-01-09 23:57
 **************************
 Debugging server/client
     *Still kind of works
+
+parabS -- 2018-01-11 00:31
+**************************
+Debugging server/client
+    *Mostly works, but still trouble with sending errors
