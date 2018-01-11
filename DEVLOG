@@ -53,3 +53,4 @@ yeH -- 2018-01-11 09:40
 **************************
 Add more descriptive prints for the subserver
     * Issue where the guessing array is not updated
+Also seed random when the subserver is created so the words picked vary
