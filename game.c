@@ -23,6 +23,8 @@ void run_game(char * word, int to_client, int from_client){
     //array and counter for guessed letters
     char * guessed_letters = calloc(26,sizeof(char));
     // string containing hang man
+    char * hangman;
+    //number of wrong guesses
     char * man;
     // for messages to be sent to client
     char * message = (char *) calloc(BUFFER_SIZE, sizeof(char));
@@ -34,8 +36,18 @@ void run_game(char * word, int to_client, int from_client){
 
         //print the man
         // sorta dangerous to write size below?
-        /* man = generate_man(wrong_guesses); */
-        /* write(to_client, man, sizeof(char) * 100); */
+        hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
+        strcpy(hangman,generate_man(wrong_guesses));
+	write(to_client, hangman, BUFFER_SIZE);
+	printf("[subserver %d] Sent %s\n", pid, hangman);
+        test = read(from_client, buffer, BUFFER_SIZE);
+        if (test == -1 || strcmp(buffer, ACK)) {
+             printf("Error 0.5!");
+        }
+        buffer = zero_heap(hangman, BUFFER_SIZE);
+	
+        /*man = generate_man(wrong_guesses); */
+	  /* write(to_client, man, sizeof(char) * 100); */
         man = (char *)calloc(2,sizeof(char));
         sprintf(man, "%d", wrong_guesses);
         write(to_client, man, sizeof(man));
@@ -181,7 +193,16 @@ void run_game(char * word, int to_client, int from_client){
 
         //check if player lost
         if(wrong_guesses == 6){
-            man = generate_man(wrong_guesses);
+	    hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
+            strcpy(hangman,generate_man(wrong_guesses));
+	    write(to_client, hangman, BUFFER_SIZE);
+	    printf("[subserver %d] Sent %s\n", pid, hangman);
+	    test = read(from_client, buffer, BUFFER_SIZE);
+	    if (test == -1 || strcmp(buffer, ACK)) {
+	      printf("Error 5.5!");
+	    }
+	    buffer = zero_heap(hangman, BUFFER_SIZE);
+            //man = generate_man(wrong_guesses);
             strcpy(message, "Sorry, you lose!");
             write(to_client, message, BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
