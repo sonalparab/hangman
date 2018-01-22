@@ -8,8 +8,10 @@
 #include <errno.h>
 #include <time.h>
 #include <ctype.h>
+#include <signal.h>
 
-#define PROMPT "Pick a letter: "
+#define MODE_PROMPT "Pick a game mode: "
+#define GAME_PROMPT "Pick a letter: "
 
 char * blank_array(int);
 
