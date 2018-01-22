@@ -6,87 +6,80 @@
 #include "sharedmem.h"
 
 static void sighandler(int signo){
-  //to remove the semaphore for now
-  if(signo == SIGINT){
-    
-    int semid = semget(KEY,1,0600);
-  
-    //if semid fails b/c doesn't exist
-    if(semid == -1){
-      printf("semaphore error: %s\n",strerror(errno));
-    }
-    else{
-      remove_sem(semid);
-    }
+    //to remove the semaphore for now
+    if (signo == SIGINT) {
 
-    semid = semget(COLLABKEY,1,0600);
-  
-    //if semid fails b/c doesn't exist
-    if(semid == -1){
-      printf("semaphore error: %s\n",strerror(errno));
-    }
-    else{
-      remove_sem(semid);
-    }
+        int semid = semget(KEY,1,0600);
 
-    int shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
-    
-    //shmid fails b/c doesn't exist
-    if(shmid == -1){
-      printf("sharedmem error: %s\n",strerror(errno));
-    }
-    else{
-      remove_shm(shmid);
-    }
+        //if semid fails b/c doesn't exist
+        if (semid == -1) {
+            printf("semaphore error: %s\n",strerror(errno));
+        } else {
+            remove_sem(semid);
+        }
 
-    shmid = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
-    
-    //shmid fails b/c doesn't exist
-    if(shmid == -1){
-      printf("sharedmem error: %s\n",strerror(errno));
-    }
-    else{
-      remove_shm(shmid);
-    }
+        semid = semget(COLLABKEY,1,0600);
 
-    shmid = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
-    
-    //shmid fails b/c doesn't exist
-    if(shmid == -1){
-      printf("sharedmem error: %s\n",strerror(errno));
-    }
-    else{
-      remove_shm(shmid);
-    }
+        //if semid fails b/c doesn't exist
+        if (semid == -1) {
+            printf("semaphore error: %s\n",strerror(errno));
+        } else {
+            remove_sem(semid);
+        }
 
-    shmid = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
-    
-    //shmid fails b/c doesn't exist
-    if(shmid == -1){
-      printf("sharedmem error: %s\n",strerror(errno));
-    }
-    else{
-      remove_shm(shmid);
-    }
+        int shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
 
-    shmid = shmget(G_KEY, (sizeof(int)),0600);
-    
-    //shmid fails b/c doesn't exist
-    if(shmid == -1){
-      printf("sharedmem error: %s\n",strerror(errno));
+        //shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
+
+        //shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
+
+        //shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
+
+        //shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(G_KEY, (sizeof(int)),0600);
+
+        //shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        exit(0);
     }
-    else{
-      remove_shm(shmid);
-    }
-    
-    exit(0);
-  }
 }
 
 int main() {
 
     signal(SIGINT, sighandler);
-    
+
     list = wordlist();
     if (list == NULL) {
         printf("Word generation failed...\n");
@@ -112,7 +105,7 @@ int main() {
 
         int f = fork();
         if (f == 0) {
-	    subserver(from_client);
+            subserver(from_client);
             exit(0);
         }
     }
@@ -141,63 +134,61 @@ void subserver(int from_client) {
     printf("[subserver] Sent %s\n", choice);
 
     choice = zero_heap(choice,BUFFER_SIZE);
-    
+
     printf("[subserver] waiting for input\n");
     //prompt input for a letter
     int test = read(from_client, game_mode, sizeof(game_mode));
     printf("[subserver] received input {%s}\n", game_mode);
 
     char mode = game_mode[0];
- 	    
-    if(mode == '1'){
-      subserver_single(buffer,to_client,from_client);
-    }
-    else if(mode == '2'){
-      subserver_collab(buffer, to_client,from_client);
-    }
-    else{
-      printf("Smh stop tryna break the code: single player");
-      subserver_single(buffer,to_client,from_client);
+
+    if (mode == '1') {
+        subserver_single(buffer,to_client,from_client);
+    } else if (mode == '2') {
+        subserver_collab(buffer, to_client,from_client);
+    } else {
+        printf("Smh stop tryna break the code: single player");
+        subserver_single(buffer,to_client,from_client);
     }
 
     /*  
-    while (1) {
+        while (1) {
         process(buffer, to_client, from_client);
-    }
-    */
+        }
+        */
 }
 
 void subserver_single(char * buffer, int to_client, int from_client) {
-     
+
     while (1) {
-      /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
-      process(buffer, to_client, from_client);
+        /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
+        process(buffer, to_client, from_client);
     }
 
 }
 
 void subserver_collab(char * buffer, int to_client, int from_client) {
-  
-  //sem stuff for multiple connects
-  int semid = create_sem(KEY,2);
-  
 
-  //if semid fails b/c already created
-  if(semid == -1){
-    printf("semaphore error: %s\n",strerror(errno));
-    //get the semid
-    semid = semget(KEY,1,0600);
-  }
+    //sem stuff for multiple connects
+    int semid = create_sem(KEY,2);
 
-  decrement_sem(semid);
-  int semval = view_sem(semid);
 
-    
-  while (1) {
-    /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
-    process_collab(buffer, to_client, from_client);
-  }
-  increment_sem(semid);
+    //if semid fails b/c already created
+    if (semid == -1) {
+        printf("semaphore error: %s\n",strerror(errno));
+        //get the semid
+        semid = semget(KEY,1,0600);
+    }
+
+    decrement_sem(semid);
+    int semval = view_sem(semid);
+
+
+    while (1) {
+        /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
+        process_collab(buffer, to_client, from_client);
+    }
+    increment_sem(semid);
 
 }
 
@@ -221,25 +212,24 @@ void process_collab(char * str, int to_client, int from_client) {
     while (1) {
 
         word = word_pick(list);
-	printf("Random word: %s\n", word);
+        printf("Random word: %s\n", word);
 
-	//save word to shared memory if needed
+        //save word to shared memory if needed
         int shmid = create_shm(COLLABKEY);
-	//shmid already made
-	if(shmid == -1){
-	  shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
-	}
-	else{
-	  set_shm(word,shmid);
-	}
+        //shmid already made
+        if (shmid == -1) {
+            shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
+        } else {
+            set_shm(word,shmid);
+        }
 
-	printf("SHMID: %d  ",shmid);
-	char *sharedword = get_shm(shmid);
-	printf("Shared word is: %s  ",sharedword);
-	
-	run_game_collab(sharedword,to_client,from_client);;
+        printf("SHMID: %d  ",shmid);
+        char *sharedword = get_shm(shmid);
+        printf("Shared word is: %s  ",sharedword);
+
+        run_game_collab(sharedword,to_client,from_client);;
         free(word);
-	remove_shm(shmid);
+        remove_shm(shmid);
         printf("new len: %d\n", wordlist_len(list));
     }
     return;
