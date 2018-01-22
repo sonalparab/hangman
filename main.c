@@ -233,7 +233,7 @@ void process_collab(char * str, int to_client, int from_client) {
         char *sharedword = get_shm(shmid);
         printf("Shared word is: %s  ",sharedword);
 
-        run_game_collab(sharedword,to_client,from_client);;
+        run_game_collab(sharedword,to_client,from_client);
         free(word);
         remove_shm(shmid);
         printf("new len: %d\n", wordlist_len(list));

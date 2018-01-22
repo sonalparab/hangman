@@ -96,7 +96,8 @@ void run_game_collab(char* word, int to_client, int from_client){
         if (collabsemval) {
             //taking a turn
             decrement_sem(collabsemid);
-
+	    printf("CLIENT %d's turn",pid);
+	    
             //get all the shared memory stuff
             shmid_guessing = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
             if (shmid_guessing == -1) {
@@ -133,7 +134,7 @@ void run_game_collab(char* word, int to_client, int from_client){
             if (won == -2 || won == -3) {
 	        increment_sem(collabsemid);
 		//wrong_guesses = get_shm_int(shmid_wrong);
-		sleep(.5);
+		sleep(.9);
 		/*if(view_sem(collabsemid) == 1){
 		  increment_sem(collabsemid);
 		  sleep(.5);
@@ -141,10 +142,7 @@ void run_game_collab(char* word, int to_client, int from_client){
 		else{
 		  increment_sem(collabsemid);
 		  }*/
-                remove_shm(shmid_guessing);
-                remove_shm(shmid_guessed);
-                remove_shm(shmid_g);
-                remove_shm(shmid_wrong);
+                
             }
             if (won == -3) {
                 //printf("RAN WRONG_GUESSES: %d, WON: %d\n",wrong_guesses,won);
@@ -167,6 +165,10 @@ void run_game_collab(char* word, int to_client, int from_client){
                 }
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
+		remove_shm(shmid_guessing);
+                remove_shm(shmid_guessed);
+                remove_shm(shmid_g);
+                remove_shm(shmid_wrong);
                 return;
             }
             if (won == -2) {
@@ -179,6 +181,10 @@ void run_game_collab(char* word, int to_client, int from_client){
                 }
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
+		remove_shm(shmid_guessing);
+                remove_shm(shmid_guessed);
+                remove_shm(shmid_g);
+                remove_shm(shmid_wrong);
                 return;
             }
 
