@@ -8,6 +8,9 @@
 static void sighandler(int signo){
     //to remove the semaphore for now
     if (signo == SIGINT) {
+        remove("WKP");
+
+        free_list();
 
         int semid = semget(KEY,1,0600);
 
@@ -85,9 +88,9 @@ int main() {
         printf("Word generation failed...\n");
         exit(1);
     }
-    int i = 0;
 
     // Writes the word list to a file
+    int i = 0;
     FILE *f = fopen("generated", "w");
     for (i = 0; *(list[i]); i++) {
         int results = fputs(list[i], f);
@@ -110,15 +113,18 @@ int main() {
         }
     }
 
+    free_list();
+    return 0;
+}
+
+void free_list() {
     // Free all memory used
+    int i = 0;
     for (i = 0; i < MAXDICTLENGTH; i++) {
         free(list[i]);
     }
     free(list);
-    return 0;
 }
-
-
 
 void subserver(int from_client) {
     int to_client = server_connect(from_client);

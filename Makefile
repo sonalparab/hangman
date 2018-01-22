@@ -8,6 +8,12 @@ server:
 client:
 	./client
 
+server-valgrind:
+	valgrind ./server --leak-check=full --tool=memcheck
+
+client-valgrind:
+	valgrind ./client --leak-check=full --tool=memcheck
+
 clean:
 	rm server
 	rm client
