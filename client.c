@@ -1,6 +1,5 @@
 #include "pipe_networking.h"
 #include "game.h"
-#include "sem.h"
 #include "client.h"
 
 static void sighandler(int signo) {

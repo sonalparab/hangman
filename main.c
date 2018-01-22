@@ -1,6 +1,7 @@
 #include "word_gen.h"
 #include "pipe_networking.h"
 #include "game.h"
+#include "collab_game.h"
 #include "sem.h"
 #include "main.h"
 #include "sharedmem.h"
