@@ -131,8 +131,16 @@ void run_game_collab(char* word, int to_client, int from_client){
             //check if player lost
             // -3 means lost, -2 means won
             if (won == -2 || won == -3) {
-                increment_sem(collabsemid);
-                sleep(.5);
+	        increment_sem(collabsemid);
+		//wrong_guesses = get_shm_int(shmid_wrong);
+		sleep(.5);
+		/*if(view_sem(collabsemid) == 1){
+		  increment_sem(collabsemid);
+		  sleep(.5);
+		}
+		else{
+		  increment_sem(collabsemid);
+		  }*/
                 remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
