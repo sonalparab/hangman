@@ -2,6 +2,7 @@
 #include "pipe_networking.h"
 #include "game.h"
 #include "collab_game.h"
+#include "competitive_game.h"
 #include "sem.h"
 #include "main.h"
 #include "sharedmem.h"
@@ -13,6 +14,7 @@ static void sighandler(int signo){
 
         free_list();
 
+	//remove semaphores used for player connection
         int semid = semget(KEY,1,0600);
 
         //if semid fails b/c doesn't exist
@@ -22,6 +24,16 @@ static void sighandler(int signo){
             remove_sem(semid);
         }
 
+	semid = semget(KEY2,1,0600);
+
+        //if semid fails b/c doesn't exist
+        if (semid == -1) {
+            printf("semaphore error: %s\n",strerror(errno));
+        } else {
+            remove_sem(semid);
+        }
+
+	//remove sempahores used for turn taking in games
         semid = semget(COLLABKEY,1,0600);
 
         //if semid fails b/c doesn't exist
@@ -31,18 +43,28 @@ static void sighandler(int signo){
             remove_sem(semid);
         }
 
+	semid = semget(COMPETEKEY,1,0600);
+
+        //if semid fails b/c doesn't exist
+        if (semid == -1) {
+            printf("semaphore error: %s\n",strerror(errno));
+        } else {
+            remove_sem(semid);
+        }
+
+	//remove collab mode memory
         int shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
 
-        //shmid fails b/c doesn't exist
+        //if shmid fails b/c doesn't exist
         if (shmid == -1) {
             printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
 
-        shmid = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
+	shmid = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
 
-        //shmid fails b/c doesn't exist
+        //if shmid fails b/c doesn't exist
         if (shmid == -1) {
             printf("sharedmem error: %s\n",strerror(errno));
         } else {
@@ -51,7 +73,7 @@ static void sighandler(int signo){
 
         shmid = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
 
-        //shmid fails b/c doesn't exist
+        //if shmid fails b/c doesn't exist
         if (shmid == -1) {
             printf("sharedmem error: %s\n",strerror(errno));
         } else {
@@ -60,7 +82,7 @@ static void sighandler(int signo){
 
         shmid = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
 
-        //shmid fails b/c doesn't exist
+        //if shmid fails b/c doesn't exist
         if (shmid == -1) {
             printf("sharedmem error: %s\n",strerror(errno));
         } else {
@@ -69,7 +91,53 @@ static void sighandler(int signo){
 
         shmid = shmget(G_KEY, (sizeof(int)),0600);
 
-        //shmid fails b/c doesn't exist
+        //if shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+	//remove competitive mode memory
+	shmid = shmget(COMPETEKEY, (sizeof(char) * 20),0600);
+
+        //if shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+	
+	shmid = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
+
+        //if shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
+
+        //if shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
+
+        //if shmid fails b/c doesn't exist
+        if (shmid == -1) {
+            printf("sharedmem error: %s\n",strerror(errno));
+        } else {
+            remove_shm(shmid);
+        }
+
+        shmid = shmget(G_KEY2, (sizeof(int)),0600);
+
+        //if shmid fails b/c doesn't exist
         if (shmid == -1) {
             printf("sharedmem error: %s\n",strerror(errno));
         } else {
@@ -153,16 +221,13 @@ void subserver(int from_client) {
         subserver_single(buffer,to_client,from_client);
     } else if (mode == '2') {
         subserver_collab(buffer, to_client,from_client);
+    } else if (mode == '3') {
+        subserver_competitive(buffer, to_client,from_client);
     } else {
         printf("Smh stop tryna break the code: single player");
         subserver_single(buffer,to_client,from_client);
     }
 
-    /*  
-        while (1) {
-        process(buffer, to_client, from_client);
-        }
-        */
 }
 
 void subserver_single(char * buffer, int to_client, int from_client) {
@@ -194,6 +259,31 @@ void subserver_collab(char * buffer, int to_client, int from_client) {
     while (1) {
         /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
         process_collab(buffer, to_client, from_client);
+    }
+    increment_sem(semid);
+
+}
+
+void subserver_competitive(char * buffer, int to_client, int from_client) {
+
+    //sem stuff for multiple connects
+    int semid = create_sem(KEY2,2);
+
+
+    //if semid fails b/c already created
+    if (semid == -1) {
+        printf("semaphore error: %s\n",strerror(errno));
+        //get the semid
+        semid = semget(KEY2,1,0600);
+    }
+
+    decrement_sem(semid);
+    int semval = view_sem(semid);
+
+
+    while (1) {
+        /* printf("[SERVER %d] received: %s\n", getpid(), buffer); */
+        process_competitive(buffer, to_client, from_client);
     }
     increment_sem(semid);
 
@@ -235,6 +325,35 @@ void process_collab(char * str, int to_client, int from_client) {
         printf("Shared word is: %s  ",sharedword);
 
         run_game_collab(sharedword,to_client,from_client);
+        free(word);
+        remove_shm(shmid);
+        printf("new len: %d\n", wordlist_len(list));
+    }
+    return;
+}
+
+void process_competitive(char * str, int to_client, int from_client) {
+    // Pick 5 random words
+    char *word;
+    while (1) {
+
+        word = word_pick(list);
+        printf("Random word: %s\n", word);
+
+        //save word to shared memory if needed
+        int shmid = create_shm(COMPETEKEY);
+        //shmid already made
+        if (shmid == -1) {
+            shmid = shmget(COMPETEKEY, (sizeof(char) * 20),0600);
+        } else {
+            set_shm(word,shmid);
+        }
+
+        printf("SHMID: %d  ",shmid);
+        char *sharedword = get_shm(shmid);
+        printf("Shared word is: %s  ",sharedword);
+
+        run_game_competitive(sharedword,to_client,from_client);
         free(word);
         remove_shm(shmid);
         printf("new len: %d\n", wordlist_len(list));

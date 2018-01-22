@@ -3,7 +3,7 @@
 #include "sem.h"
 #include "sharedmem.h"
 
-int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, char* guessed_letters, int *index, char * word, int to_client, int from_client){
+int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array, char* guessed_letters, int *index, char * word, int to_client, int from_client){
     int wrong_guesses = *wrong_guessespointer;
     int g = *index;
     //printf("LEN: %d\n\n",len);
@@ -210,28 +210,28 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     }
 
     //set all the shared memory stuff
-    int shmid_guessing = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
+    int shmid_guessing = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
     if (shmid_guessing == -1) {
         printf("ERROR 10\n");
     } else {
         set_shm(guessing_array,shmid_guessing);
     }
 
-    int shmid_guessed = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
+    int shmid_guessed = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
     if (shmid_guessed == -1) {
         printf("ERROR 11\n");
     } else {
         set_shm_array(guessed_letters,shmid_guessed);
     }
 
-    int shmid_g = shmget(G_KEY, (sizeof(int)),0600);
+    int shmid_g = shmget(G_KEY2, (sizeof(int)),0600);
     if (shmid_g == -1) {
         printf("ERROR 12\n");
     } else {
         set_shm_int(g,shmid_g);
     }
 
-    int shmid_wrong = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
+    int shmid_wrong = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
     if (shmid_wrong == -1) {
         printf("ERROR 13\n");
     } else {
@@ -261,13 +261,19 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 
     if (wrong_guesses == 6) {
         return -3;
-    }
+    } 
 
+    //if letter guessed was in word
+    // return -4 to prompt turn again
+    if (t) {
+        return -4;
+    }
+    
     return wrong_guesses;
 }
 
 
-void run_game_collab(char* word, int to_client, int from_client){
+void run_game_competitive(char* word, int to_client, int from_client){
     //see if word sent was same 
     printf("WORD: %s\n\n",word);
 
@@ -294,35 +300,35 @@ void run_game_collab(char* word, int to_client, int from_client){
     int won = 0;
 
     //set the shared memory stuff
-    int shmid_guessing = create_shm(GUESSING_ARRAY_KEY);
+    int shmid_guessing = create_shm(GUESSING_ARRAY_KEY2);
     if (shmid_guessing == -1) {
-        shmid_guessing = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
+        shmid_guessing = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
     } else {
         set_shm(guessing_array,shmid_guessing);
     }
 
-    int shmid_guessed = create_shm_array(GUESSED_LETTER_KEY);
+    int shmid_guessed = create_shm_array(GUESSED_LETTER_KEY2);
     if (shmid_guessed == -1) {
-        shmid_guessed = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
+        shmid_guessed = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
     } else {
         set_shm_array(guessed_letters,shmid_guessed);
     }
 
-    int shmid_g = create_shm_int(G_KEY);
+    int shmid_g = create_shm_int(G_KEY2);
     if (shmid_g == -1) {
-        shmid_g = shmget(G_KEY, (sizeof(int)),0600);
+        shmid_g = shmget(G_KEY2, (sizeof(int)),0600);
     } else {
         set_shm_int(g,shmid_g);
     }
 
-    int shmid_wrong = create_shm_int(WRONG_GUESSES_KEY);
+    int shmid_wrong = create_shm_int(WRONG_GUESSES_KEY2);
     if (shmid_wrong == -1) {
-        shmid_wrong = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
+        shmid_wrong = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
     } else {
         set_shm_int(wrong_guesses,shmid_wrong);
     }
 
-    int semid = semget(KEY,1,0600);
+    int semid = semget(KEY2,1,0600);
 
     int semval = view_sem(semid);
     printf("semval is %d \n",semval);
@@ -335,69 +341,65 @@ void run_game_collab(char* word, int to_client, int from_client){
     }
 
     //MAKE A SEMAPHORE TO KEEP TRACK OF THE BACK AND FORTH STUFF
-    int collabsemid = create_sem(COLLABKEY,1);
+    int competesemid = create_sem(COMPETEKEY,1);
 
-    if (collabsemid == -1) {
+    if (competesemid == -1) {
         printf("semaphore error: %s\n",strerror(errno));
         //get the semid if already made
-        collabsemid = semget(COLLABKEY,1,0600);
+        competesemid = semget(COMPETEKEY,1,0600);
     }
 
-    int collabsemval;
+    int competesemval;
 
     while (1) {
-        collabsemval = view_sem(collabsemid);
+        competesemval = view_sem(competesemid);
 
-        if (collabsemval) {
+        if (competesemval) {
             //taking a turn
-            decrement_sem(collabsemid);
+            decrement_sem(competesemid);
 	    printf("CLIENT %d's turn",pid);
-	    
-            //get all the shared memory stuff
-            shmid_guessing = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
-            if (shmid_guessing == -1) {
-                printf("ERROR 10\n");
-            } else {
-                guessing_array = get_shm(shmid_guessing);
-            }
 
-            shmid_guessed = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
-            if (shmid_guessed == -1) {
-                printf("ERROR 11\n");
-            } else {
-                guessed_letters = get_shm_array(shmid_guessed);
-            }
-
-            shmid_g = shmget(G_KEY, (sizeof(int)),0600);
-            if (shmid_g == -1) {
-                printf("ERROR 12\n");
-            } else {
-                g = get_shm_int(shmid_g);
-            }
-
-            shmid_wrong = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
-            if (shmid_wrong == -1) {
-                printf("ERROR 13\n");
-            } else {
-                wrong_guesses = get_shm_int(shmid_wrong);
-            }
-
-            //making the actual turn call
-            won = run_turn_collab(len,&wrong_guesses, guessing_array, guessed_letters, &g, word, to_client, from_client);
-            //check if player lost
-            // -3 means lost, -2 means won
-            if (won == -2 || won == -3) {
-	        increment_sem(collabsemid);
-		//wrong_guesses = get_shm_int(shmid_wrong);
-		sleep(.9);
-		/*if(view_sem(collabsemid) == 1){
-		  increment_sem(collabsemid);
-		  sleep(.5);
+	    won = -4;
+	    while(won == -4){
+	      
+	        //get all the shared memory stuff
+                shmid_guessing = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
+		if (shmid_guessing == -1) {
+		  printf("ERROR 10\n");
+		} else {
+		  guessing_array = get_shm(shmid_guessing);
 		}
-		else{
-		  increment_sem(collabsemid);
-		  }*/
-                
+		
+		shmid_guessed = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
+		if (shmid_guessed == -1) {
+		  printf("ERROR 11\n");
+		} else {
+		  guessed_letters = get_shm_array(shmid_guessed);
+		}
+
+		shmid_g = shmget(G_KEY2, (sizeof(int)),0600);
+		if (shmid_g == -1) {
+		  printf("ERROR 12\n");
+		} else {
+		  g = get_shm_int(shmid_g);
+		}
+		
+		shmid_wrong = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
+		if (shmid_wrong == -1) {
+		  printf("ERROR 13\n");
+		} else {
+		  wrong_guesses = get_shm_int(shmid_wrong);
+		}
+		
+		//making the actual turn call
+		won = run_turn_competitive(len,&wrong_guesses, guessing_array, guessed_letters, &g, word, to_client, from_client);
+	    }
+            //check if player lost/won
+            // -3 means lost, -2 means won
+	    // this allows other player to know what happened
+            if (won == -2 || won == -3) {
+	        increment_sem(competesemid);
+		sleep(.9);
             }
             if (won == -3) {
                 //printf("RAN WRONG_GUESSES: %d, WON: %d\n",wrong_guesses,won);
@@ -444,10 +446,11 @@ void run_game_collab(char* word, int to_client, int from_client){
             }
 
             //increment the sem to give the other player a chance
-            increment_sem(collabsemid);
+            increment_sem(competesemid);
             sleep(.5);
         }
 
     }
+    
 }
 

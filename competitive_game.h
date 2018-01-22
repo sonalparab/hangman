@@ -13,10 +13,10 @@
 #define MODE_PROMPT "Pick a game mode: "
 #define GAME_PROMPT "Pick a letter: "
 
-#ifndef COLLAB_GAME_H
-#define COLLAB_GAME_H
-int run_turn_collab(int, int *, char *, char *, int *, char *, int, int);
+#ifndef COMPETITIVE_GAME_H
+#define COMPETITIVE_GAME_H
+int run_turn_competitive(int, int *, char *, char *, int *, char *, int, int);
 
-void run_game_collab(char *, int, int);
+void run_game_competitive(char *, int, int);
 
 #endif

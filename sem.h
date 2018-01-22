@@ -12,7 +12,9 @@
 #include <sys/stat.h>
 
 #define KEY 832
+#define KEY2 833
 #define COLLABKEY 835
+#define COMPETEKEY 837
 
 int semid;
 union semun{

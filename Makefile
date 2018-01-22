@@ -1,5 +1,5 @@
 all:
-	gcc -o server main.c game.c collab_game.c pipe_networking.c word_gen.c sem.c sharedmem.c -g
+	gcc -o server main.c game.c collab_game.c competitive_game.c pipe_networking.c word_gen.c sem.c sharedmem.c -g
 	gcc -o client client.c pipe_networking.c -g
 
 server-valgrind:
