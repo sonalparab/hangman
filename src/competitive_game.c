@@ -1,7 +1,8 @@
 #include "game.h"
-#include "pipe_networking.h"
+/* #include "pipe_networking.h" */
 #include "sem.h"
 #include "sharedmem.h"
+#include "networking.h"
 
 void get_status(int len, int client_socket){
     int pid = getpid();

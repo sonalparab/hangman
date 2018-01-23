@@ -1,7 +1,8 @@
 #include "game.h"
-#include "pipe_networking.h"
+/* #include "pipe_networking.h" */
 #include "sem.h"
 #include "sharedmem.h"
+#include "networking.h"
 
 int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, char* guessed_letters,
         int *index, char * word, int client_socket){

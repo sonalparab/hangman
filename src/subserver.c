@@ -30,8 +30,6 @@ void subserver(int client_socket) {
 
     char mode = game_mode[0];
 
-    subserver_single(buffer, client_socket);
-    /*
     if (mode == '1') {
         subserver_single(buffer, client_socket);
     } else if (mode == '2') {
@@ -42,7 +40,6 @@ void subserver(int client_socket) {
         printf("Smh stop tryna break the code: single player");
         subserver_single(buffer, client_socket);
     }
-    */
 
 }
 
