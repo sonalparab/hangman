@@ -27,19 +27,6 @@ void get_status(int len, int to_client, int from_client){
     }
     hangman = zero_heap(hangman, BUFFER_SIZE);
     buffer = zero_heap(buffer, BUFFER_SIZE);
-
-    if(wrong_guesses == 6){
-        strcpy(message, "Sorry, you lose!");
-	write(to_client, message, BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	test = read(from_client, buffer, BUFFER_SIZE);
-	if (test == -1 || strcmp(buffer, ACK)) {
-	  printf("Error 6!");
-	}
-	buffer = zero_heap(buffer, BUFFER_SIZE);
-	message = zero_heap(message, BUFFER_SIZE);
-	return;
-    }
     
     //print the blank spaces for the word, with correct guesses filled in
     if (guessing_array[0] != 0) {
@@ -420,7 +407,7 @@ void run_game_competitive(char* word, int to_client, int from_client){
         competesemid = semget(COMPETEKEY,1,0600);
     }
 
-    //set to 2 to avoid blocking
+    //semaphore for allowing the other client to 
     int turnsemid = create_sem(TURNKEY, 1);
 
     if (turnsemid == -1) {
@@ -435,32 +422,40 @@ void run_game_competitive(char* word, int to_client, int from_client){
     int turnsemval;
 
     while (1) {
+        sleep(.1);
         competesemval = view_sem(competesemid);
 
 	turnsemval = view_sem(turnsemid);
 
 	//wait so that both semaphores have a chance to change
-	//sleep(.1);
-	/*
+		
 	//if other player took a turn and is going again
 	// find out what happened
-	if(!competesemval && turnsemval == 1){
+	if(competesemval == 0 && turnsemval == 1){
 	    get_status(len, to_client, from_client);
 	    decrement_sem(turnsemid);
-	    printf("TURNSEMVAL: %d\n",view_sem(turnsemid)); 
-	}*/
+	    sleep(.1);
+	}
 
         if (competesemval) {
             //taking a turn
             decrement_sem(competesemid);
-	    //decrement_sem(turnsemid);
+
+	    //its possible turnsemid wasn't incremented yet
+	    // its possible was decremented before turn was ran
+	    turnsemval = view_sem(turnsemid);
+	    if(turnsemval == 0){
+	        sleep(.1);
+		printf("Waiting for increment\n");
+	        increment_sem(turnsemid);
+	    }
+
+	    decrement_sem(turnsemid);
 	    	    
 	    printf("CLIENT %d's turn",pid);
 
 	    won = -4;
 	    while(won == -4){
-	        printf("COMPETESEMVAL: %d\n",view_sem(competesemid));
-	        //printf("TURNSEMVAL: %d\n",view_sem(turnsemid)); 
 	        //get all the shared memory stuff
                 shmid_guessing = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
 		if (shmid_guessing == -1) {
@@ -494,31 +489,31 @@ void run_game_competitive(char* word, int to_client, int from_client){
 		won = run_turn_competitive(len,&wrong_guesses, guessing_array, guessed_letters, &g, word, to_client, from_client);
 
 		//means player is going again, update other player
-		//if(won == -4){
-		  //increment_sem(turnsemid);
-		  //sleep(.1);
-		//}
+		if(won == -4){
+		  increment_sem(turnsemid);
+		  //printf("TURNSEMVAL: %d\n",view_sem(turnsemid)); 
+		  sleep(.8);
+		}
 	    }
             //check if player lost/won
             // -3 means lost, -2 means won
 	    // this allows other player to know what happened
             if (won == -2 || won == -3) {
 	        increment_sem(competesemid);
-		//increment_sem(turnsemid);
-		sleep(.3);
+		increment_sem(turnsemid);
+		sleep(.5);
             }
 	    // for second player
 	    if (won == -8 || won == -9) {
+	        printf("Second client");
 	        increment_sem(competesemid);
-		sleep(.1);
+		//sleep(.2);
+		increment_sem(turnsemid);
+		//remove_sem(turnsemid);
 		return;
-		//increment_sem(turnsemid);
             }
             if (won == -3) {
-	        //get_status(len, to_client, from_client);
-                //printf("RAN WRONG_GUESSES: %d, WON: %d\n",wrong_guesses,won);
-                
-                
+	        
 	        strcpy(message, "Sorry, you lose!");
 		write(to_client, message, BUFFER_SIZE);
 		printf("[subserver %d] Sent %s\n", pid, message);
@@ -529,12 +524,12 @@ void run_game_competitive(char* word, int to_client, int from_client){
 		buffer = zero_heap(buffer, BUFFER_SIZE);
 		message = zero_heap(message, BUFFER_SIZE);
                 
-		//remove_sem(turnsemid);
+		//
 		//wait for other client to finish
 		while(!view_sem(competesemid)){
 		  sleep(.1);
 		}
-		
+
 		remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
@@ -551,12 +546,12 @@ void run_game_competitive(char* word, int to_client, int from_client){
                 }
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
-		//remove_sem(turnsemid);
 
 		//wait for other client to finish
 		while(!view_sem(competesemid)){
 		  sleep(.1);
 		}
+
 		remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
@@ -564,10 +559,12 @@ void run_game_competitive(char* word, int to_client, int from_client){
                 return;
             }
 
+	    printf("NEXT PLAYER turn\n");
+	    
             //increment the sem to give the other player a chance
-            increment_sem(competesemid);
-	    //increment_sem(turnsemid);
-            sleep(.5);
+	    increment_sem(competesemid);
+	    increment_sem(turnsemid);
+            sleep(1);
         }
 
     }
