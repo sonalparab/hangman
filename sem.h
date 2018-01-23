@@ -15,6 +15,7 @@
 #define KEY2 833
 #define COLLABKEY 835
 #define COMPETEKEY 837
+#define TURNKEY 839
 
 int semid;
 union semun{

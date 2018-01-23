@@ -52,6 +52,15 @@ static void sighandler(int signo){
             remove_sem(semid);
         }
 
+	semid = semget(TURNKEY,1,0600);
+
+        //if semid fails b/c doesn't exist
+        if (semid == -1) {
+            printf("semaphore error: %s\n",strerror(errno));
+        } else {
+            remove_sem(semid);
+        }
+	
 	//remove collab mode memory
         int shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
 
