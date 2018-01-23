@@ -11,10 +11,10 @@
 
 // For use in actual game
 #define DICTLOCATION "/usr/share/dict/american-english"
-#define MAXDICTLENGTH 100000
+#define MAXDICTLENGTH 80000
 
 // for use in testing
-/* #define DICTLOCATION "testdict" */
+/* #define DICTLOCATION "../testdict" */
 /* #define MAXDICTLENGTH 10 */
 
 #define MAXWORDLENGTH 20
