@@ -104,7 +104,7 @@ void run_game(char * word, int to_client, int from_client){
             //print the letters guessed already, if guesses were made
             i = 0;
             if (g) {
-                write(to_client, guessed_letters, sizeof(guessed_letters));
+	        write(to_client, guessed_letters, g);//sizeof(guessed_letters));
                 printf("[subserver %d] Sent %s\n", pid, guessed_letters);
                 test = read(from_client, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
