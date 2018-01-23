@@ -16,10 +16,10 @@
 #ifndef COMPETITIVE_GAME_H
 #define COMPETITIVE_GAME_H
 
-void get_status(int, int, int);
+void get_status(int, int);
 
-int run_turn_competitive(int, int *, char *, char *, int *, char *, int, int);
+int run_turn_competitive(int, int *, char *, char *, int *, char *, int);
 
-void run_game_competitive(char *, int, int);
+void run_game_competitive(char *, int);
 
 #endif

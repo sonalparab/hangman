@@ -3,7 +3,7 @@
 #include "sem.h"
 #include "sharedmem.h"
 
-void get_status(int len, int to_client, int from_client){
+void get_status(int len, int client_socket){
     int pid = getpid();
     char * buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
     char * message = (char *) calloc (BUFFER_SIZE, sizeof(char));
@@ -19,9 +19,9 @@ void get_status(int len, int to_client, int from_client){
     //print the man
     char * hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
     strcpy(hangman,generate_man(wrong_guesses));
-    write(to_client, hangman, BUFFER_SIZE);
+    write(client_socket, hangman, BUFFER_SIZE);
     printf("[subserver %d] Sent %s\n", pid, hangman);
-    test = read(from_client, buffer, BUFFER_SIZE);
+    test = read(client_socket, buffer, BUFFER_SIZE);
     if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 0.5!");
     }
@@ -30,9 +30,9 @@ void get_status(int len, int to_client, int from_client){
 
     //print the blank spaces for the word, with correct guesses filled in
     if (guessing_array[0] != 0) {
-        write(to_client, guessing_array, len);//sizeof(guessing_array));
+        write(client_socket, guessing_array, len);//sizeof(guessing_array));
         printf("[subserver %d] Sent %s\n", pid, guessing_array);
-        test = read(from_client, buffer, BUFFER_SIZE);
+        test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
         }
@@ -42,7 +42,7 @@ void get_status(int len, int to_client, int from_client){
 }
 
 int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array,
-        char* guessed_letters, int *index, char * word, int to_client, int from_client){
+        char* guessed_letters, int *index, char * word, int client_socket){
     int wrong_guesses = *wrong_guessespointer;
     int g = *index;
     //printf("LEN: %d\n\n",len);
@@ -66,22 +66,22 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     // sorta dangerous to write size below?
     hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
     strcpy(hangman,generate_man(wrong_guesses));
-    write(to_client, hangman, BUFFER_SIZE);
+    write(client_socket, hangman, BUFFER_SIZE);
     printf("[subserver %d] Sent %s\n", pid, hangman);
-    test = read(from_client, buffer, BUFFER_SIZE);
+    test = read(client_socket, buffer, BUFFER_SIZE);
     if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 0.5!");
     }
     buffer = zero_heap(hangman, BUFFER_SIZE);
 
     /*man = generate_man(wrong_guesses); */
-    /* write(to_client, man, sizeof(char) * 100); */
+    /* write(client_socket, man, sizeof(char) * 100); */
     man = (char *)calloc(2,sizeof(char));
     sprintf(man, "%d", wrong_guesses);
-    write(to_client, man, sizeof(man));
+    write(client_socket, man, sizeof(man));
     printf("[subserver %d] Sent %s\n", pid, man);
     free(man);
-    test = read(from_client, buffer, BUFFER_SIZE);
+    test = read(client_socket, buffer, BUFFER_SIZE);
 
     if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 1!");
@@ -91,9 +91,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     //print the blank spaces for the word, with correct guesses filled in
     int i = 0;
     if (guessing_array[0] != 0) {
-        write(to_client, guessing_array, len);//sizeof(guessing_array));
+        write(client_socket, guessing_array, len);//sizeof(guessing_array));
         printf("[subserver %d] Sent %s\n", pid, guessing_array);
-        test = read(from_client, buffer, BUFFER_SIZE);
+        test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
         }
@@ -118,9 +118,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     // word was already guessed, won!
     if (!b) {
         strcpy(message,"You win!");
-        write(to_client, message, BUFFER_SIZE);
+        write(client_socket, message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, message);
-        test = read(from_client, buffer, BUFFER_SIZE);
+        test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 7!");
         }
@@ -132,9 +132,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     //if wrong_guesses is 6, player lost
     if(wrong_guesses == 6){
         strcpy(message, "Sorry, you lose!");
-        write(to_client, message, BUFFER_SIZE);
+        write(client_socket, message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, message);
-        test = read(from_client, buffer, BUFFER_SIZE);
+        test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 6!");
         }
@@ -149,9 +149,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         //print the letters guessed already, if guesses were made
         i = 0;
         if (g) {
-            write(to_client, guessed_letters, g);//sizeof(guessed_letters));
+            write(client_socket, guessed_letters, g);//sizeof(guessed_letters));
             printf("[subserver %d] Sent %s\n", pid, guessed_letters);
-            test = read(from_client, buffer, BUFFER_SIZE);
+            test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 3!");
             }
@@ -159,13 +159,13 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         }
 
         strcpy(message,"Pick a letter: ");
-        write(to_client, message, BUFFER_SIZE);
+        write(client_socket, message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, message);
         message = zero_heap(message, BUFFER_SIZE);
 
         printf("[subserver %d] waiting for input\n", pid);
         //prompt input for a letter
-        test = read(from_client, input, sizeof(input));
+        test = read(client_socket, input, sizeof(input));
         printf("[subserver %d] received input {%s}\n", pid, input);
 
         //only first character inputed will be counted as letter guess
@@ -176,9 +176,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         //if the character inputted was uppercase
         if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL) {
             strcpy(message,"Please input a lowercase letter next time");
-            write(to_client, message, BUFFER_SIZE);
+            write(client_socket, message, BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
-            test = read(from_client, buffer, BUFFER_SIZE);
+            test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 4!");
             }
@@ -191,9 +191,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         //if the guess was not a letter
         if (strchr("abcdefghijklmnopqrstuvwxyz",letter) == NULL) {
             strcpy(message,"Not a valid letter");
-            write(to_client, message, BUFFER_SIZE);
+            write(client_socket, message, BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
-            test = read(from_client, buffer, BUFFER_SIZE);
+            test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 5!");
             }
@@ -208,9 +208,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
                 if (guessed_letters[i] == letter) {
                     k = 1;
                     strcpy(message,"Letter was previously guessed. Guess again.");
-                    write(to_client, message, BUFFER_SIZE);
+                    write(client_socket, message, BUFFER_SIZE);
                     printf("[subserver %d] Sent %s\n", pid, message);
-                    test = read(from_client, buffer, BUFFER_SIZE);
+                    test = read(client_socket, buffer, BUFFER_SIZE);
                     if (test == -1 || strcmp(buffer, ACK)) {
                         printf("Error lost count");
                     }
@@ -248,9 +248,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     // sorta dangerous to write size below?
     hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
     strcpy(hangman,generate_man(wrong_guesses));
-    write(to_client, hangman, BUFFER_SIZE);
+    write(client_socket, hangman, BUFFER_SIZE);
     printf("[subserver %d] Sent %s\n", pid, hangman);
-    test = read(from_client, buffer, BUFFER_SIZE);
+    test = read(client_socket, buffer, BUFFER_SIZE);
     if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 0.5!");
     }
@@ -259,9 +259,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     //print the blank spaces for the word, with correct guesses filled in
     i = 0;
     if (guessing_array[0] != 0) {
-        write(to_client, guessing_array, len);//sizeof(guessing_array));
+        write(client_socket, guessing_array, len);//sizeof(guessing_array));
         printf("[subserver %d] Sent %s\n", pid, guessing_array);
-        test = read(from_client, buffer, BUFFER_SIZE);
+        test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
         }
@@ -331,7 +331,7 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     return wrong_guesses;
 }
 
-void run_game_competitive(char* word, int to_client, int from_client){
+void run_game_competitive(char* word, int client_socket){
     //see if word sent was same 
     printf("WORD: %s\n\n",word);
 
@@ -432,7 +432,7 @@ void run_game_competitive(char* word, int to_client, int from_client){
         //if other player took a turn and is going again
         // find out what happened
         if(competesemval == 0 && turnsemval == 1){
-            get_status(len, to_client, from_client);
+            get_status(len, client_socket);
             decrement_sem(turnsemid);
             sleep(.1);
         }
@@ -487,7 +487,7 @@ void run_game_competitive(char* word, int to_client, int from_client){
 
                 //making the actual turn call
                 won = run_turn_competitive(len,&wrong_guesses, guessing_array,
-                        guessed_letters, &g, word, to_client, from_client);
+                        guessed_letters, &g, word, client_socket);
 
                 //means player is going again, update other player
                 if(won == -4){
@@ -516,9 +516,9 @@ void run_game_competitive(char* word, int to_client, int from_client){
             if (won == -3) {
 
                 strcpy(message, "Sorry, you lose!");
-                write(to_client, message, BUFFER_SIZE);
+                write(client_socket, message, BUFFER_SIZE);
                 printf("[subserver %d] Sent %s\n", pid, message);
-                test = read(from_client, buffer, BUFFER_SIZE);
+                test = read(client_socket, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 6!");
                 }
@@ -539,9 +539,9 @@ void run_game_competitive(char* word, int to_client, int from_client){
             }
             if (won == -2) {
                 strcpy(message,"You win!");
-                write(to_client, message, BUFFER_SIZE);
+                write(client_socket, message, BUFFER_SIZE);
                 printf("[subserver %d] Sent %s\n", pid, message);
-                test = read(from_client, buffer, BUFFER_SIZE);
+                test = read(client_socket, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
                     printf("Error 7!");
                 }

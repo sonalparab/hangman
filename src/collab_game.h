@@ -15,8 +15,8 @@
 
 #ifndef COLLAB_GAME_H
 #define COLLAB_GAME_H
-int run_turn_collab(int, int *, char *, char *, int *, char *, int, int);
+int run_turn_collab(int, int *, char *, char *, int *, char *, int);
 
-void run_game_collab(char *, int, int);
+void run_game_collab(char *, int);
 
 #endif

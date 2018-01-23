@@ -1,12 +1,13 @@
 #include "subserver.h"
 #include "word_gen.h"
-#include "pipe_networking.h"
+/* #include "pipe_networking.h" */
 #include "game.h"
 #include "collab_game.h"
 #include "competitive_game.h"
 #include "sem.h"
 #include "sharedmem.h"
 #include "main.h"
+#include "networking.h"
 
 static void sighandler(int signo){
     //to remove the semaphore for now
@@ -170,25 +171,29 @@ int main() {
 
     // Writes the word list to a file
     int i = 0;
-    FILE *f = fopen("generated", "w");
+    FILE *file = fopen("generated", "w");
     for (i = 0; *(list[i]); i++) {
-        int results = fputs(list[i], f);
-        results = fputs("\n", f);
+        int results = fputs(list[i], file);
+        results = fputs("\n", file);
     }
-    fclose(f);
+    fclose(file);
 
     // Count the number of available words
     printf("len: %d\n", wordlist_len(list));
+    int listen_socket;
+    int f;
+    listen_socket = server_setup();
 
-    int from_client;
-    char buffer[HANDSHAKE_BUFFER_SIZE];
+
     while (1) {
-        from_client = server_setup(buffer);
+        int client_socket = server_connect(listen_socket);
 
-        int f = fork();
+        f = fork();
         if (f == 0) {
-            subserver(from_client);
+            subserver(client_socket);
             exit(0);
+        } else {
+            close(client_socket);
         }
     }
 

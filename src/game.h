@@ -17,7 +17,7 @@
 #define GAME_H
 char * blank_array(int);
 
-void run_game(char *, int, int);
+void run_game(char *, int);
 
 char * generate_man(int);
 #endif
