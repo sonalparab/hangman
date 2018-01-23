@@ -8,13 +8,13 @@ void get_status(int len, int to_client, int from_client){
     char * buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
     char * message = (char *) calloc (BUFFER_SIZE, sizeof(char));
     int test;
-    
+
     int shmid_guessing = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
     char * guessing_array = get_shm(shmid_guessing);
-		
+
     int shmid_wrong = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
     int wrong_guesses = get_shm_int(shmid_wrong);
-    
+
     //show the current player what other player accomplished
     //print the man
     char * hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
@@ -27,7 +27,7 @@ void get_status(int len, int to_client, int from_client){
     }
     hangman = zero_heap(hangman, BUFFER_SIZE);
     buffer = zero_heap(buffer, BUFFER_SIZE);
-    
+
     //print the blank spaces for the word, with correct guesses filled in
     if (guessing_array[0] != 0) {
         write(to_client, guessing_array, len);//sizeof(guessing_array));
@@ -39,10 +39,10 @@ void get_status(int len, int to_client, int from_client){
         buffer = zero_heap(buffer, BUFFER_SIZE);
     }
 
-    
 }
 
-int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array, char* guessed_letters, int *index, char * word, int to_client, int from_client){
+int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array,
+        char* guessed_letters, int *index, char * word, int to_client, int from_client){
     int wrong_guesses = *wrong_guessespointer;
     int g = *index;
     //printf("LEN: %d\n\n",len);
@@ -113,33 +113,33 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     }
 
     //for second client to exit early
-    
+
     //if b is 0, there were no blank spaces
     // word was already guessed, won!
     if (!b) {
         strcpy(message,"You win!");
-	write(to_client, message, BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	test = read(from_client, buffer, BUFFER_SIZE);
-	if (test == -1 || strcmp(buffer, ACK)) {
-	  printf("Error 7!");
-	}
-	buffer = zero_heap(buffer, BUFFER_SIZE);
-	message = zero_heap(message, BUFFER_SIZE);
+        write(to_client, message, BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        test = read(from_client, buffer, BUFFER_SIZE);
+        if (test == -1 || strcmp(buffer, ACK)) {
+            printf("Error 7!");
+        }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
+        message = zero_heap(message, BUFFER_SIZE);
         return -8;
     }
 
     //if wrong_guesses is 6, player lost
     if(wrong_guesses == 6){
         strcpy(message, "Sorry, you lose!");
-	write(to_client, message, BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	test = read(from_client, buffer, BUFFER_SIZE);
-	if (test == -1 || strcmp(buffer, ACK)) {
-	  printf("Error 6!");
-	}
-	buffer = zero_heap(buffer, BUFFER_SIZE);
-	message = zero_heap(message, BUFFER_SIZE);
+        write(to_client, message, BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        test = read(from_client, buffer, BUFFER_SIZE);
+        if (test == -1 || strcmp(buffer, ACK)) {
+            printf("Error 6!");
+        }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
+        message = zero_heap(message, BUFFER_SIZE);
         return -9;
     }
 
@@ -149,7 +149,7 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         //print the letters guessed already, if guesses were made
         i = 0;
         if (g) {
-	    write(to_client, guessed_letters, g);//sizeof(guessed_letters));
+            write(to_client, guessed_letters, g);//sizeof(guessed_letters));
             printf("[subserver %d] Sent %s\n", pid, guessed_letters);
             test = read(from_client, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
@@ -327,7 +327,7 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     if (t) {
         return -4;
     }
-    
+
     return wrong_guesses;
 }
 
@@ -417,7 +417,7 @@ void run_game_competitive(char* word, int to_client, int from_client){
     }
 
     printf("TURNSEMVAL: %d\n",view_sem(turnsemid));
-    
+
     int competesemval;
     int turnsemval;
 
@@ -425,112 +425,113 @@ void run_game_competitive(char* word, int to_client, int from_client){
         sleep(.1);
         competesemval = view_sem(competesemid);
 
-	turnsemval = view_sem(turnsemid);
+        turnsemval = view_sem(turnsemid);
 
-	//wait so that both semaphores have a chance to change
-		
-	//if other player took a turn and is going again
-	// find out what happened
-	if(competesemval == 0 && turnsemval == 1){
-	    get_status(len, to_client, from_client);
-	    decrement_sem(turnsemid);
-	    sleep(.1);
-	}
+        //wait so that both semaphores have a chance to change
+
+        //if other player took a turn and is going again
+        // find out what happened
+        if(competesemval == 0 && turnsemval == 1){
+            get_status(len, to_client, from_client);
+            decrement_sem(turnsemid);
+            sleep(.1);
+        }
 
         if (competesemval) {
             //taking a turn
             decrement_sem(competesemid);
 
-	    //its possible turnsemid wasn't incremented yet
-	    // its possible was decremented before turn was ran
-	    turnsemval = view_sem(turnsemid);
-	    if(turnsemval == 0){
-	        sleep(.1);
-		printf("Waiting for increment\n");
-	        increment_sem(turnsemid);
-	    }
+            //its possible turnsemid wasn't incremented yet
+            // its possible was decremented before turn was ran
+            turnsemval = view_sem(turnsemid);
+            if(turnsemval == 0){
+                sleep(.1);
+                printf("Waiting for increment\n");
+                increment_sem(turnsemid);
+            }
 
-	    decrement_sem(turnsemid);
-	    	    
-	    printf("CLIENT %d's turn",pid);
+            decrement_sem(turnsemid);
 
-	    won = -4;
-	    while(won == -4){
-	        //get all the shared memory stuff
+            printf("CLIENT %d's turn",pid);
+
+            won = -4;
+            while(won == -4){
+                //get all the shared memory stuff
                 shmid_guessing = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
-		if (shmid_guessing == -1) {
-		  printf("ERROR 10\n");
-		} else {
-		  guessing_array = get_shm(shmid_guessing);
-		}
-		
-		shmid_guessed = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
-		if (shmid_guessed == -1) {
-		  printf("ERROR 11\n");
-		} else {
-		  guessed_letters = get_shm_array(shmid_guessed);
-		}
+                if (shmid_guessing == -1) {
+                    printf("ERROR 10\n");
+                } else {
+                    guessing_array = get_shm(shmid_guessing);
+                }
 
-		shmid_g = shmget(G_KEY2, (sizeof(int)),0600);
-		if (shmid_g == -1) {
-		  printf("ERROR 12\n");
-		} else {
-		  g = get_shm_int(shmid_g);
-		}
-		
-		shmid_wrong = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
-		if (shmid_wrong == -1) {
-		  printf("ERROR 13\n");
-		} else {
-		  wrong_guesses = get_shm_int(shmid_wrong);
-		}
-		
-		//making the actual turn call
-		won = run_turn_competitive(len,&wrong_guesses, guessing_array, guessed_letters, &g, word, to_client, from_client);
+                shmid_guessed = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
+                if (shmid_guessed == -1) {
+                    printf("ERROR 11\n");
+                } else {
+                    guessed_letters = get_shm_array(shmid_guessed);
+                }
 
-		//means player is going again, update other player
-		if(won == -4){
-		  increment_sem(turnsemid);
-		  //printf("TURNSEMVAL: %d\n",view_sem(turnsemid)); 
-		  sleep(.8);
-		}
-	    }
+                shmid_g = shmget(G_KEY2, (sizeof(int)),0600);
+                if (shmid_g == -1) {
+                    printf("ERROR 12\n");
+                } else {
+                    g = get_shm_int(shmid_g);
+                }
+
+                shmid_wrong = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
+                if (shmid_wrong == -1) {
+                    printf("ERROR 13\n");
+                } else {
+                    wrong_guesses = get_shm_int(shmid_wrong);
+                }
+
+                //making the actual turn call
+                won = run_turn_competitive(len,&wrong_guesses, guessing_array,
+                        guessed_letters, &g, word, to_client, from_client);
+
+                //means player is going again, update other player
+                if(won == -4){
+                    increment_sem(turnsemid);
+                    //printf("TURNSEMVAL: %d\n",view_sem(turnsemid)); 
+                    sleep(.8);
+                }
+            }
             //check if player lost/won
             // -3 means lost, -2 means won
-	    // this allows other player to know what happened
+            // this allows other player to know what happened
             if (won == -2 || won == -3) {
-	        increment_sem(competesemid);
-		increment_sem(turnsemid);
-		sleep(.5);
+                increment_sem(competesemid);
+                increment_sem(turnsemid);
+                sleep(.5);
             }
-	    // for second player
-	    if (won == -8 || won == -9) {
-	        printf("Second client");
-	        increment_sem(competesemid);
-		//sleep(.2);
-		increment_sem(turnsemid);
-		//remove_sem(turnsemid);
-		return;
+            // for second player
+            if (won == -8 || won == -9) {
+                printf("Second client");
+                increment_sem(competesemid);
+                //sleep(.2);
+                increment_sem(turnsemid);
+                //remove_sem(turnsemid);
+                return;
             }
             if (won == -3) {
-	        
-	        strcpy(message, "Sorry, you lose!");
-		write(to_client, message, BUFFER_SIZE);
-		printf("[subserver %d] Sent %s\n", pid, message);
-		test = read(from_client, buffer, BUFFER_SIZE);
-		if (test == -1 || strcmp(buffer, ACK)) {
-		  printf("Error 6!");
-		}
-		buffer = zero_heap(buffer, BUFFER_SIZE);
-		message = zero_heap(message, BUFFER_SIZE);
-                
-		//
-		//wait for other client to finish
-		while(!view_sem(competesemid)){
-		  sleep(.1);
-		}
 
-		remove_shm(shmid_guessing);
+                strcpy(message, "Sorry, you lose!");
+                write(to_client, message, BUFFER_SIZE);
+                printf("[subserver %d] Sent %s\n", pid, message);
+                test = read(from_client, buffer, BUFFER_SIZE);
+                if (test == -1 || strcmp(buffer, ACK)) {
+                    printf("Error 6!");
+                }
+                buffer = zero_heap(buffer, BUFFER_SIZE);
+                message = zero_heap(message, BUFFER_SIZE);
+
+                //
+                //wait for other client to finish
+                while(!view_sem(competesemid)){
+                    sleep(.1);
+                }
+
+                remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
                 remove_shm(shmid_wrong);
@@ -547,27 +548,27 @@ void run_game_competitive(char* word, int to_client, int from_client){
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
 
-		//wait for other client to finish
-		while(!view_sem(competesemid)){
-		  sleep(.1);
-		}
+                //wait for other client to finish
+                while(!view_sem(competesemid)){
+                    sleep(.1);
+                }
 
-		remove_shm(shmid_guessing);
+                remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
                 remove_shm(shmid_wrong);
                 return;
             }
 
-	    printf("NEXT PLAYER turn\n");
-	    
+            printf("NEXT PLAYER turn\n");
+
             //increment the sem to give the other player a chance
-	    increment_sem(competesemid);
-	    increment_sem(turnsemid);
+            increment_sem(competesemid);
+            increment_sem(turnsemid);
             sleep(1);
         }
 
     }
-    
+
 }
 

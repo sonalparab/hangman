@@ -1,9 +1,3 @@
-char ** list;
-
-int main();
-
-void free_list();
-
 void subserver(int);
 
 void subserver_single(char *,int, int);

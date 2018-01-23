@@ -3,7 +3,8 @@
 #include "sem.h"
 #include "sharedmem.h"
 
-int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, char* guessed_letters, int *index, char * word, int to_client, int from_client){
+int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, char* guessed_letters,
+        int *index, char * word, int to_client, int from_client){
     int wrong_guesses = *wrong_guessespointer;
     int g = *index;
     //printf("LEN: %d\n\n",len);
@@ -74,33 +75,33 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     }
 
     //for second client to exit early
-    
+
     //if b is 0, there were no blank spaces
     // word was already guessed, won!
     if (!b) {
         strcpy(message,"You win!");
-	write(to_client, message, BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	test = read(from_client, buffer, BUFFER_SIZE);
-	if (test == -1 || strcmp(buffer, ACK)) {
-	  printf("Error 7!");
-	}
-	buffer = zero_heap(buffer, BUFFER_SIZE);
-	message = zero_heap(message, BUFFER_SIZE);
+        write(to_client, message, BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        test = read(from_client, buffer, BUFFER_SIZE);
+        if (test == -1 || strcmp(buffer, ACK)) {
+            printf("Error 7!");
+        }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
+        message = zero_heap(message, BUFFER_SIZE);
         return -8;
     }
 
     //if wrong_guesses is 6, player lost
     if(wrong_guesses == 6){
         strcpy(message, "Sorry, you lose!");
-	write(to_client, message, BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	test = read(from_client, buffer, BUFFER_SIZE);
-	if (test == -1 || strcmp(buffer, ACK)) {
-	  printf("Error 6!");
-	}
-	buffer = zero_heap(buffer, BUFFER_SIZE);
-	message = zero_heap(message, BUFFER_SIZE);
+        write(to_client, message, BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        test = read(from_client, buffer, BUFFER_SIZE);
+        if (test == -1 || strcmp(buffer, ACK)) {
+            printf("Error 6!");
+        }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
+        message = zero_heap(message, BUFFER_SIZE);
         return -9;
     }
 
@@ -111,7 +112,7 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         //print the letters guessed already, if guesses were made
         i = 0;
         if (g) {
-	    write(to_client, guessed_letters, g);//sizeof(guessed_letters));
+            write(to_client, guessed_letters, g);//sizeof(guessed_letters));
             printf("[subserver %d] Sent %s\n", pid, guessed_letters);
             test = read(from_client, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
@@ -372,8 +373,8 @@ void run_game_collab(char* word, int to_client, int from_client){
         if (collabsemval) {
             //taking a turn
             decrement_sem(collabsemid);
-	    printf("CLIENT %d's turn",pid);
-	    
+            printf("CLIENT %d's turn",pid);
+
             //get all the shared memory stuff
             shmid_guessing = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
             if (shmid_guessing == -1) {
@@ -404,44 +405,45 @@ void run_game_collab(char* word, int to_client, int from_client){
             }
 
             //making the actual turn call
-            won = run_turn_collab(len,&wrong_guesses, guessing_array, guessed_letters, &g, word, to_client, from_client);
+            won = run_turn_collab(len,&wrong_guesses, guessing_array,
+                    guessed_letters, &g, word, to_client, from_client);
             //check if player lost/won
             // -3 means lost, -2 means won
-	    // this allows other player to know what happened
+            // this allows other player to know what happened
             if (won == -2 || won == -3) {
-	        increment_sem(collabsemid);
-		//increment_sem(turnsemid);
-		sleep(.3);
+                increment_sem(collabsemid);
+                //increment_sem(turnsemid);
+                sleep(.3);
             }
-	    // for second player
-	    if (won == -8 || won == -9) {
-	        increment_sem(collabsemid);
-		sleep(.1);
-		return;
-		//increment_sem(turnsemid);
+            // for second player
+            if (won == -8 || won == -9) {
+                increment_sem(collabsemid);
+                sleep(.1);
+                return;
+                //increment_sem(turnsemid);
             }
             if (won == -3) {
-	        //get_status(len, to_client, from_client);
+                //get_status(len, to_client, from_client);
                 //printf("RAN WRONG_GUESSES: %d, WON: %d\n",wrong_guesses,won);
-                
-                
-	        strcpy(message, "Sorry, you lose!");
-		write(to_client, message, BUFFER_SIZE);
-		printf("[subserver %d] Sent %s\n", pid, message);
-		test = read(from_client, buffer, BUFFER_SIZE);
-		if (test == -1 || strcmp(buffer, ACK)) {
-		  printf("Error 6!");
-		}
-		buffer = zero_heap(buffer, BUFFER_SIZE);
-		message = zero_heap(message, BUFFER_SIZE);
-                
-		//remove_sem(turnsemid);
-		//wait for other client to finish
-		while(!view_sem(collabsemid)){
-		  sleep(.1);
-		}
-		
-		remove_shm(shmid_guessing);
+
+
+                strcpy(message, "Sorry, you lose!");
+                write(to_client, message, BUFFER_SIZE);
+                printf("[subserver %d] Sent %s\n", pid, message);
+                test = read(from_client, buffer, BUFFER_SIZE);
+                if (test == -1 || strcmp(buffer, ACK)) {
+                    printf("Error 6!");
+                }
+                buffer = zero_heap(buffer, BUFFER_SIZE);
+                message = zero_heap(message, BUFFER_SIZE);
+
+                //remove_sem(turnsemid);
+                //wait for other client to finish
+                while(!view_sem(collabsemid)){
+                    sleep(.1);
+                }
+
+                remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
                 remove_shm(shmid_wrong);
@@ -457,13 +459,13 @@ void run_game_collab(char* word, int to_client, int from_client){
                 }
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
-		//remove_sem(turnsemid);
+                //remove_sem(turnsemid);
 
-		//wait for other client to finish
-		while(!view_sem(collabsemid)){
-		  sleep(.1);
-		}
-		remove_shm(shmid_guessing);
+                //wait for other client to finish
+                while(!view_sem(collabsemid)){
+                    sleep(.1);
+                }
+                remove_shm(shmid_guessing);
                 remove_shm(shmid_guessed);
                 remove_shm(shmid_g);
                 remove_shm(shmid_wrong);
