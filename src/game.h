@@ -15,9 +15,15 @@
 
 #ifndef GAME_H
 #define GAME_H
+//create the guessing array with '_' for the
+// letters based on the length of the word
 char * blank_array(int);
 
+//generate hangman based on the number of
+// wrong guesses
+char * generate_man(int);
+
+//run the game
 void run_game(char *, int);
 
-char * generate_man(int);
 #endif

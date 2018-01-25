@@ -1,5 +1,4 @@
 #include "game.h"
-/* #include "pipe_networking.h" */
 #include "sem.h"
 #include "sharedmem.h"
 #include "networking.h"
@@ -11,6 +10,66 @@ char * blank_array(int length){
         array[i] = '_';
     }
     return array;
+}
+
+char * generate_man(int n){
+    printf("[subserver] generating man...\n");
+    char * man = (char *)calloc(100, sizeof(char));
+    size_t size = 100 * sizeof(char);
+    size_t line_len = strlen("       \n");
+    strcpy(man, "\n  ____ \n");
+    strncat(man, " |    |\n", size -= line_len + 1);
+    //    printf(" O    |\n");
+    //    printf("\|/   |\n");
+    //    printf(" |    |\n");
+    //    printf("/ \   |\n");
+    //    printf("      |\n");
+    //    printf("______|_\n");
+    if (n == 0) {
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+    }
+    if (n == 1) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+    }
+    if (n == 2) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+    }
+    if (n == 3) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|    |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+    }
+    if (n == 4) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|/   |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "      |\n", size-= line_len);
+    }
+    if (n == 5) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|/   |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "/     |\n", size-= line_len);
+    }
+    if (n == 6) {
+        strncat(man, " O    |\n", size-= line_len);
+        strncat(man, "\\|/   |\n", size-= line_len);
+        strncat(man, " |    |\n", size-= line_len);
+        strncat(man, "/ \\   |\n", size-= line_len);
+    }
+    strncat(man, "      |\n", size-= line_len);
+    strncat(man, "______|_\n", size-= line_len);
+    return man;
 }
 
 void run_game(char * word, int client_socket) {
@@ -39,7 +98,6 @@ void run_game(char * word, int client_socket) {
     while (1) {
 
         //print the man
-        // sorta dangerous to write size below?
         hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
 	strcpy(hangman,"man");
         strcat(hangman,generate_man(wrong_guesses));
@@ -54,8 +112,6 @@ void run_game(char * word, int client_socket) {
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
         if (guessing_array[0] != 0) {
-	    
-	  //write(client_socket, guessing_array, len);//sizeof(guessing_array));
 	    strcpy(message, "guessing");
 	    strcat(message, guessing_array);
 	    write(client_socket,message,BUFFER_SIZE);
@@ -92,8 +148,6 @@ void run_game(char * word, int client_socket) {
             //print the letters guessed already, if guesses were made
             i = 0;
             if (g) {
-	        
-	      //write(client_socket, guessed_letters, g);//sizeof(guessed_letters));
 		strcpy(message, "guessed");
 		strcat(message, guessed_letters);
 		write(client_socket,message,BUFFER_SIZE);
@@ -171,8 +225,7 @@ void run_game(char * word, int client_socket) {
         }
 
         //update guessed_letters array with new guess
-
-        guessed_letters[g] = letter;
+	guessed_letters[g] = letter;
         g++;
 
 
@@ -188,6 +241,7 @@ void run_game(char * word, int client_socket) {
         }
 
         //update wrong guess count if needed
+	// if t is 0, the letter guessed was not in the word
         if (!t) {
             wrong_guesses++;
         }
@@ -203,7 +257,6 @@ void run_game(char * word, int client_socket) {
                 printf("Error 5.5!");
             }
             buffer = zero_heap(hangman, BUFFER_SIZE);
-            //man = generate_man(wrong_guesses);
             strcpy(message, "Sorry, you lose!");
             write(client_socket, message, BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
@@ -229,63 +282,3 @@ void run_game(char * word, int client_socket) {
     return;
 }
 
-char * generate_man(int n){
-    printf("[subserver] generating man...\n");
-    char * man = (char *)calloc(100, sizeof(char));
-    size_t size = 100 * sizeof(char);
-    size_t line_len = strlen("       \n");
-    strcpy(man, "\n  ____ \n");
-    strncat(man, " |    |\n", size -= line_len + 1);
-    //    printf(" O    |\n");
-    //    printf("\|/   |\n");
-    //    printf(" |    |\n");
-    //    printf("/ \   |\n");
-    //    printf("      |\n");
-    //    printf("______|_\n");
-    if (n == 0) {
-        strncat(man, "      |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-    }
-    if (n == 1) {
-        strncat(man, " O    |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-    }
-    if (n == 2) {
-        strncat(man, " O    |\n", size-= line_len);
-        strncat(man, " |    |\n", size-= line_len);
-        strncat(man, " |    |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-    }
-    if (n == 3) {
-        strncat(man, " O    |\n", size-= line_len);
-        strncat(man, "\\|    |\n", size-= line_len);
-        strncat(man, " |    |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-    }
-    if (n == 4) {
-        strncat(man, " O    |\n", size-= line_len);
-        strncat(man, "\\|/   |\n", size-= line_len);
-        strncat(man, " |    |\n", size-= line_len);
-        strncat(man, "      |\n", size-= line_len);
-    }
-    if (n == 5) {
-        strncat(man, " O    |\n", size-= line_len);
-        strncat(man, "\\|/   |\n", size-= line_len);
-        strncat(man, " |    |\n", size-= line_len);
-        strncat(man, "/     |\n", size-= line_len);
-    }
-    if (n == 6) {
-        strncat(man, " O    |\n", size-= line_len);
-        strncat(man, "\\|/   |\n", size-= line_len);
-        strncat(man, " |    |\n", size-= line_len);
-        strncat(man, "/ \\   |\n", size-= line_len);
-    }
-    strncat(man, "      |\n", size-= line_len);
-    strncat(man, "______|_\n", size-= line_len);
-    /* printf("%s", man); */
-    return man;
-}

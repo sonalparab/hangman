@@ -16,10 +16,14 @@
 #ifndef COMPETITIVE_GAME_H
 #define COMPETITIVE_GAME_H
 
+//used for second player when one player goes multiple times
+// in a row
 void get_status(int, int);
 
+//run one turn
 int run_turn_competitive(int, int *, char *, char *, int *, char *, int);
 
+//run the game for competitive mode
 void run_game_competitive(char *, int);
 
 #endif

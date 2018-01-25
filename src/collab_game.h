@@ -15,8 +15,11 @@
 
 #ifndef COLLAB_GAME_H
 #define COLLAB_GAME_H
+
+//run one turn
 int run_turn_collab(int, int *, char *, char *, int *, char *, int);
 
+//run the game for collab mode
 void run_game_collab(char *, int);
 
 #endif

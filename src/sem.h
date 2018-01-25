@@ -28,13 +28,19 @@ union semun{
 
 #ifndef SEM
 #define SEM
+//create a semaphore with a given key, set to a
+// given value
 int create_sem(int,int);
 
+//remove a semaphore, given the id
 void remove_sem(int);
 
+//get the value of the semaphore, given the id
 int view_sem(int);
 
+//decrement the semaphore, given the id
 void decrement_sem(int);
 
+//increment the semaphore, given the id
 void increment_sem(int);
 #endif

@@ -1,6 +1,5 @@
 #include "subserver.h"
 #include "word_gen.h"
-/* #include "pipe_networking.h" */
 #include "game.h"
 #include "collab_game.h"
 #include "competitive_game.h"

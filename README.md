@@ -69,8 +69,5 @@ Replace `127.0.0.1` with the server's IPv4 address.
 
 ## Bugs
 
-* Bugs
-* to
-* be
-* added
-* soon!
+* Only one game of collab and competitive mode can be run at the same time, meaning multiple collab or multiple competitive game can not be run at once
+* Sometimes there is a delay between turn in competitive mode

@@ -10,23 +10,28 @@
 #include <sys/stat.h>
 #include <string.h>
 
-//used for collab mode
+//keys used for collab mode
 #define WRONG_GUESSES_KEY 850
 #define G_KEY 851
 #define GUESSING_ARRAY_KEY 852
 #define GUESSED_LETTER_KEY 853
 
-//used for competitive mode
+//keys used for competitive mode
 #define WRONG_GUESSES_KEY2 860
 #define G_KEY2 861
 #define GUESSING_ARRAY_KEY2 862
 #define GUESSED_LETTER_KEY2 863
 
 //memory functions for char* length 20
+//create the shared memory with a given a key
 int create_shm(int);
 
+//get the value of the shared memory,
+// given the id
 char * get_shm(int);
 
+//set the value of the shared memory,
+// given the value and the id
 void set_shm(char *,int);
 
 //memory functions for int
@@ -43,7 +48,7 @@ char * get_shm_array(int);
 
 void set_shm_array(char *,int);
 
-//remove shared memory
+//remove the shared memory, given the id
 void remove_shm(int);
 
 

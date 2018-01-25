@@ -1,5 +1,4 @@
 #include "game.h"
-/* #include "pipe_networking.h" */
 #include "sem.h"
 #include "sharedmem.h"
 #include "networking.h"
@@ -26,7 +25,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     printf("[subserver %d] running turn...\n", pid);
 
     //print the man
-    // sorta dangerous to write size below?
     hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
     strcpy(hangman,"man");
     strcat(hangman,generate_man(wrong_guesses));
@@ -41,7 +39,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     //print the blank spaces for the word, with correct guesses filled in
     int i = 0;
     if (guessing_array[0] != 0) {
-      //write(client_socket, guessing_array, len);//sizeof(guessing_array));
         strcpy(message, "guessing");
 	strcat(message, guessing_array);
 	write(client_socket,message,BUFFER_SIZE);
@@ -67,10 +64,10 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         }
     }
 
-    //for second client to exit early
+    //for second client to exit turn early
 
     //if b is 0, there were no blank spaces
-    // word was already guessed, won!
+    // word was already guessed, players won!
     if (!b) {
         strcpy(message,"You win!");
         write(client_socket, message, BUFFER_SIZE);
@@ -84,7 +81,7 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         return -8;
     }
 
-    //if wrong_guesses is 6, player lost
+    //if wrong_guesses is 6, players lost
     if(wrong_guesses == 6){
         strcpy(message, "Sorry, you lose!");
         write(client_socket, message, BUFFER_SIZE);
@@ -105,7 +102,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         //print the letters guessed already, if guesses were made
         i = 0;
         if (g) {
-	  //write(client_socket, guessed_letters, g);//sizeof(guessed_letters));
 	    strcpy(message, "guessed");
 	    strcat(message, guessed_letters);
 	    write(client_socket,message,BUFFER_SIZE);
@@ -183,7 +179,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     }
 
     //update guessed_letters array with new guess
-
     guessed_letters[g] = letter;
     g++;
 
@@ -200,13 +195,13 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     }
 
     //update wrong guess count if needed
+    // if t is 0, the letter guessed was not in the word
     if (!t) {
         wrong_guesses++;
     }
 
     //show the current player what they accomplished
     //print the man
-    // sorta dangerous to write size below?
     hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
     strcpy(hangman,"man");
     strcat(hangman,generate_man(wrong_guesses));
@@ -221,7 +216,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     //print the blank spaces for the word, with correct guesses filled in
     i = 0;
     if (guessing_array[0] != 0) {
-      //write(client_socket, guessing_array, len);//sizeof(guessing_array));
         strcpy(message, "guessing");
 	strcat(message, guessing_array);
 	write(client_socket,message,BUFFER_SIZE);
@@ -280,11 +274,14 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     }
 
     //if b is 0, there were no blank spaces
-    // word was already guessed, -1
+    // word was already guessed, return -2
+    // to indicate won
     if (!b) {
         return -2;
     }
 
+    //if wrong_guesses is 6, man was hung
+    // return -3 to indicate lost
     if (wrong_guesses == 6) {
         return -3;
     }
@@ -294,7 +291,7 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 
 
 void run_game_collab(char* word, int client_socket){
-    //see if word sent was same 
+    //word for the game
     printf("WORD: %s\n\n",word);
 
     int test;
@@ -303,7 +300,6 @@ void run_game_collab(char* word, int client_socket){
     char * buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
     char * hangman;
 
-    //stuff to keep track of
     int wrong_guesses = 0;
     int len = strlen(word);
     //array for guessing the word, intially blank
@@ -360,12 +356,12 @@ void run_game_collab(char* word, int client_socket){
         sleep(.5);
     }
 
-    //MAKE A SEMAPHORE TO KEEP TRACK OF THE BACK AND FORTH STUFF
+    //semaphore for turns
     int collabsemid = create_sem(COLLABKEY,1);
 
     if (collabsemid == -1) {
         //printf("semaphore error: %s\n",strerror(errno));
-        //get the semid if already made
+        //get the semid if semaphore already made
         collabsemid = semget(COLLABKEY,1,0600);
     }
 
@@ -377,7 +373,6 @@ void run_game_collab(char* word, int client_socket){
         if (collabsemval) {
             //taking a turn
             decrement_sem(collabsemid);
-            //printf("CLIENT %d's turn",pid);
 
             //get all the shared memory stuff
             shmid_guessing = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
@@ -416,21 +411,16 @@ void run_game_collab(char* word, int client_socket){
             // this allows other player to know what happened
             if (won == -2 || won == -3) {
                 increment_sem(collabsemid);
-                //increment_sem(turnsemid);
+		//wait for the other player to know what happened
                 sleep(.3);
             }
-            // for second player
+            //for second player exiting turn early
             if (won == -8 || won == -9) {
                 increment_sem(collabsemid);
                 sleep(.1);
                 return;
-                //increment_sem(turnsemid);
             }
             if (won == -3) {
-                //get_status(len, client_socket, client_socket);
-                //printf("RAN WRONG_GUESSES: %d, WON: %d\n",wrong_guesses,won);
-
-
                 strcpy(message, "Sorry, you lose!");
                 write(client_socket, message, BUFFER_SIZE);
                 printf("[subserver %d] Sent %s\n", pid, message);

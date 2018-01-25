@@ -1,4 +1,3 @@
-/* #include "pipe_networking.h" */
 #include "game.h"
 #include "client.h"
 #include "networking.h"
@@ -54,34 +53,26 @@ int main(int argc, char **argv) {
             fgets(input, sizeof(input), stdin);
             *strchr(input, '\n') = 0;
             write(server_socket, input, sizeof(input));
-            //printf("[client] wrote input: [%s]\n", input);
-            /*
-               fgets(buffer, BUFFER_SIZE, stdin);
-             *strchr(buffer, '\n') = 0;
-             write(server_socket, buffer, BUFFER_SIZE);
-             printf("[client] wrote input: [%s]\n", buffer);
-             */
         } else if (strcmp(substring(buffer,3), "man") == 0){
-            /* *strchr(buffer, '\n') = 0; */
-	    
+	    //for printing the man
             char * man = (char *) calloc(BUFFER_SIZE,sizeof(char));
 	    strncpy(man, buffer + 3, BUFFER_SIZE - 3);
 	    printf("%s\n", man);
 	    man = zero_heap(man, BUFFER_SIZE);
+	    
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
         } else if (strcmp(substring(buffer,8), "guessing") == 0){
-            /* *strchr(buffer, '\n') = 0; */
-	    
+	    //for printing the guessing array
             char * guessing = (char *) calloc(BUFFER_SIZE,sizeof(char));
 	    strncpy(guessing, buffer + 8, BUFFER_SIZE - 8);
 	    printf("word: %s\n", guessing);
 	    guessing = zero_heap(guessing, BUFFER_SIZE);
+	    
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
         } else if (strcmp(substring(buffer,7), "guessed") == 0){
-            /* *strchr(buffer, '\n') = 0; */
-	    
+	    //for printing the guessed letters
             char * guessed = (char *) calloc(BUFFER_SIZE,sizeof(char));
 	    strncpy(guessed, buffer + 7, BUFFER_SIZE - 7);
 	    printf("guessed letters: ");
@@ -91,11 +82,12 @@ int main(int argc, char **argv) {
 	    }
 	    printf("\n");
 	    guessed = zero_heap(guessed, BUFFER_SIZE);
+	    
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
         } else {
-            /* *strchr(buffer, '\n') = 0; */
             printf("%s\n", buffer);
+	    
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
         }
