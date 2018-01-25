@@ -99,3 +99,8 @@ Signal handling to prevent client from exiting during a game
 yeH -- 2018-01-25 1:50
 **************************
 Handle when a subserver runs out of words. (Just quits the subserver.)
+
+parabS -- 2018-01-25 18:26
+**************************
+Tried to fix memory leaks
+     * There are still leaks

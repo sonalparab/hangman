@@ -71,7 +71,7 @@ Replace `127.0.0.1` with the server's IPv4 address.
 
 * Only one game of collab and competitive mode can be run at the same time, meaning multiple collab or multiple competitive game can not be run at once
 * Sometimes there is a delay between turns in competitive mode
-* Client can quit at anytime (Tried signal handler to fix this, but introduced a lot of problems.)
+* Client can quit at anytime (Tried signal handler to fix this, but introduced a lot of problems.) However, if playing collab or competitive mode, the player left can finish that game, but must wait for another client to connect with the same mode before a new game is started.
 * Some words in the dictionary have special unicode characters such as é that we don't accept.
 * When playing in a multiplayer mode, when you input to stdin while it isn't your turn, it reads it as the next input for when it is your turn.
 * The word prints in the server (this was intentional to ease testing).
