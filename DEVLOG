@@ -85,8 +85,12 @@ Working competitive mode
 
 yeH -- 2018-01-23 11:05
 **************************
-Implement networking for single player games
+Implement networking for games
 
 parabS -- 2018-01-24 22:32
 **************************
 Prettier printing
+
+yeH -- 2018-01-25 11:50
+**************************
+Signal handling to prevent client from exiting during a game
