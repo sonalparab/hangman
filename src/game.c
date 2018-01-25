@@ -51,25 +51,6 @@ void run_game(char * word, int client_socket) {
         }
         hangman = zero_heap(hangman, BUFFER_SIZE);
 
-        /*man = generate_man(wrong_guesses); */
-        /* write(client_socket, man, sizeof(char) * 100); */
-        /*man = (char *)calloc(2,sizeof(char));
-        sprintf(man, "%d", wrong_guesses);
-        write(client_socket, man, sizeof(man));
-        printf("[subserver %d] Sent %s\n", pid, man);
-        free(man);
-        test = read(client_socket, buffer, BUFFER_SIZE);
-
-        //why is it -72?
-        //the buffer is empty??
-        //k it works now but im keeping this in just incase
-        //printf("%s\n",buffer);
-
-        if (test == -1 || strcmp(buffer, ACK)) {
-            printf("Error 1!");
-        }
-        buffer = zero_heap(buffer, BUFFER_SIZE);*/
-
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
         if (guessing_array[0] != 0) {

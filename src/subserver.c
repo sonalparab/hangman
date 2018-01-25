@@ -55,7 +55,7 @@ void subserver_single(char * buffer, int client_socket) {
 void subserver_collab(char * buffer, int client_socket) {
 
     //sem stuff for multiple connects
-    int semid = create_sem(KEY,2);
+    int semid = create_sem(KEY, 2);
 
 
     //if semid fails b/c already created

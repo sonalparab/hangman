@@ -22,24 +22,32 @@
 #define GUESSING_ARRAY_KEY2 862
 #define GUESSED_LETTER_KEY2 863
 
-//for word length 20
+//memory functions for char* length 20
 int create_shm(int);
-
-int create_shm_int(int);
-
-//for length 26
-int create_shm_array(int);
-
-void remove_shm(int);
 
 char * get_shm(int);
 
-char * get_shm_array(int);
+void set_shm(char *,int);
+
+//memory functions for int
+int create_shm_int(int);
 
 int get_shm_int(int);
 
-void set_shm(char *,int);
-
 void set_shm_int(int,int);
 
+//memory functions for char* length 26
+int create_shm_array(int);
+
+char * get_shm_array(int);
+
 void set_shm_array(char *,int);
+
+//remove shared memory
+void remove_shm(int);
+
+
+
+
+
+
