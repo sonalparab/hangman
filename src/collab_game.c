@@ -35,6 +35,7 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         printf("Error 0.5!");
     }
     hangman = zero_heap(hangman, BUFFER_SIZE);
+    buffer = zero_heap(buffer, BUFFER_SIZE);
 
     //print the blank spaces for the word, with correct guesses filled in
     int i = 0;
@@ -44,7 +45,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 	write(client_socket,message,BUFFER_SIZE);
 	printf("[subserver %d] Sent %s\n", pid, message);
 	message = zero_heap(message, BUFFER_SIZE);
-        printf("[subserver %d] Sent %s\n", pid, guessing_array);
         test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
@@ -107,7 +107,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 	    write(client_socket,message,BUFFER_SIZE);
 	    printf("[subserver %d] Sent %s\n", pid, message);
 	    message = zero_heap(message, BUFFER_SIZE);
-	    printf("[subserver %d] Sent %s\n", pid, guessed_letters);
             test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 3!");
@@ -212,6 +211,7 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         printf("Error 0.5!");
     }
     hangman = zero_heap(hangman, BUFFER_SIZE);
+    buffer = zero_heap(buffer, BUFFER_SIZE);
 
     //print the blank spaces for the word, with correct guesses filled in
     i = 0;
@@ -221,7 +221,6 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 	write(client_socket,message,BUFFER_SIZE);
 	printf("[subserver %d] Sent %s\n", pid, message);
 	message = zero_heap(message, BUFFER_SIZE);
-        printf("[subserver %d] Sent %s\n", pid, guessing_array);
         test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
