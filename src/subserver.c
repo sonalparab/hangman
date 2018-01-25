@@ -14,12 +14,12 @@ void subserver(int client_socket) {
 
     char game_mode[10];
 
-    char *choice =(char *) calloc(BUFFER_SIZE,sizeof(char));
-    strcpy(choice,"Pick a game mode: ");
-    write(client_socket,choice,BUFFER_SIZE);
-    printf("[subserver] Sent %s\n", choice);
+    char *prompt =(char *) calloc(BUFFER_SIZE,sizeof(char));
+    strcpy(prompt,"Pick a game mode: ");
+    write(client_socket,prompt,BUFFER_SIZE);
+    printf("[subserver] Sent %s\n", prompt);
 
-    choice = zero_heap(choice,BUFFER_SIZE);
+    prompt = zero_heap(prompt,BUFFER_SIZE);
 
     printf("[subserver] waiting for input\n");
     
@@ -37,7 +37,11 @@ void subserver(int client_socket) {
     } else if (mode == '3') {
         subserver_competitive(buffer, client_socket);
     } else {
-        printf("Invalid mode: Single player");
+        strcpy(prompt,"Invalid mode: Single player");
+	write(client_socket,prompt,BUFFER_SIZE);
+	printf("[subserver] Sent %s\n", prompt);
+	prompt = zero_heap(prompt, BUFFER_SIZE);
+	test = read(client_socket, buffer, BUFFER_SIZE);
         subserver_single(buffer, client_socket);
     }
 
