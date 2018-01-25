@@ -48,13 +48,13 @@ int main(int argc, char **argv) {
             fgets(mode, sizeof(mode), stdin);
             *strchr(mode, '\n') = 0;
             write(server_socket, mode, sizeof(mode));
-            printf("[client] wrote mode: [%s]\n", mode);
+            //printf("[client] wrote mode: [%s]\n", mode);
         } else if (strcmp(buffer, GAME_PROMPT) == 0) {
             printf(GAME_PROMPT);
             fgets(input, sizeof(input), stdin);
             *strchr(input, '\n') = 0;
             write(server_socket, input, sizeof(input));
-            printf("[client] wrote input: [%s]\n", input);
+            //printf("[client] wrote input: [%s]\n", input);
             /*
                fgets(buffer, BUFFER_SIZE, stdin);
              *strchr(buffer, '\n') = 0;
