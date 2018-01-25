@@ -116,9 +116,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     //for second client to exit early
 
     //if b is 0, there were no blank spaces
-    // word was already guessed, won!
+    // word was already guessed, other player won
     if (!b) {
-        strcpy(message,"You win!");
+        strcpy(message,"Your opponent guessed the word, you lose!");
         write(client_socket, message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, message);
         test = read(client_socket, buffer, BUFFER_SIZE);
@@ -130,9 +130,9 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         return -8;
     }
 
-    //if wrong_guesses is 6, player lost
+    //if wrong_guesses is 6, other player lost
     if(wrong_guesses == 6){
-        strcpy(message, "Sorry, you lose!");
+        strcpy(message, "You didn't guess the word, but you win!");
         write(client_socket, message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, message);
         test = read(client_socket, buffer, BUFFER_SIZE);
