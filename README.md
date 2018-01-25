@@ -73,4 +73,4 @@ Replace `127.0.0.1` with the server's IPv4 address.
 * Sometimes there is a delay between turns in competitive mode
 * Client can quit at anytime (Tried signal handler to fix this, but introduced a lot of problems.)
 * Some words in the dictionary have special unicode characters such as é that we don't accept.
-* When playing in a multiplayer mode, when you input to stdin while it isn't your turn, it reads it as the next input.
+* When playing in a multiplayer mode, when you input to stdin while it isn't your turn, it reads it as the next input for when it is your turn.
