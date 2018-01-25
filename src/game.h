@@ -12,8 +12,6 @@
 
 #define MODE_PROMPT "Pick a game mode: "
 #define GAME_PROMPT "Pick a letter: "
-#define LOSE_MSG "Sorry, you lose!"
-#define WIN_MSG "You win!"
 
 #ifndef GAME_H
 #define GAME_H
