@@ -64,6 +64,7 @@ int wordlist_len(char ** list) {
     return i;
 }
 
+// Lower string
 unsigned char * lower(char *str) {
     unsigned char *my_str = (unsigned char *) str;
     int i = 0;

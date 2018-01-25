@@ -21,11 +21,21 @@
 
 #ifndef WORDGEN_H
 #define WORDGEN_H
+
+// Opens the dictionary location specified above, which on Ubuntu
+// is a list of valid american english words
+// Filter out words that we deem invalid for hangman, such as with
+// less than 6 characters or has apostrophes
+// Then generate a list of strings with the valid words
 char ** wordlist();
 
+// Given the list of words, take one at random and remove it from
+// the list so it won't be chosen again
 char * word_pick(char **);
 
+// Given the list of words, return its length
 int wordlist_len(char **);
 
+// Lowers all characters in a string
 unsigned char * lower(char *str);
 #endif
