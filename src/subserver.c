@@ -22,7 +22,7 @@ void subserver(int client_socket) {
     prompt = zero_heap(prompt,BUFFER_SIZE);
 
     printf("[subserver] waiting for input\n");
-    
+
     //prompt player for a mode
     int test = read(client_socket, game_mode, sizeof(game_mode));
     printf("[subserver] received input {%s}\n", game_mode);
@@ -38,10 +38,10 @@ void subserver(int client_socket) {
         subserver_competitive(buffer, client_socket);
     } else {
         strcpy(prompt,"Invalid mode: Single player");
-	write(client_socket,prompt,BUFFER_SIZE);
-	printf("[subserver] Sent %s\n", prompt);
-	prompt = zero_heap(prompt, BUFFER_SIZE);
-	test = read(client_socket, buffer, BUFFER_SIZE);
+        write(client_socket,prompt,BUFFER_SIZE);
+        printf("[subserver] Sent %s\n", prompt);
+        prompt = zero_heap(prompt, BUFFER_SIZE);
+        test = read(client_socket, buffer, BUFFER_SIZE);
         subserver_single(buffer, client_socket);
     }
 
@@ -124,13 +124,13 @@ void process_collab(char * str, int client_socket) {
         int shmid = create_shm(COLLABKEY);
         //shmid already created
         if (shmid == -1) {
-	    //get the shmid
+            //get the shmid
             shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
         } else {
             set_shm(word,shmid);
         }
 
-	//get the word for the game
+        //get the word for the game
         char *sharedword = get_shm(shmid);
 
         run_game_collab(sharedword,client_socket);
@@ -152,13 +152,13 @@ void process_competitive(char * str, int client_socket) {
         int shmid = create_shm(COMPETEKEY);
         //shmid already created
         if (shmid == -1) {
-	    //get the shmid
+            //get the shmid
             shmid = shmget(COMPETEKEY, (sizeof(char) * 20),0600);
         } else {
             set_shm(word,shmid);
         }
 
-	//get the word for the game
+        //get the word for the game
         char *sharedword = get_shm(shmid);
 
         run_game_competitive(sharedword,client_socket);

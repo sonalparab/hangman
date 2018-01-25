@@ -99,7 +99,7 @@ void run_game(char * word, int client_socket) {
 
         //print the man
         hangman = (char *) calloc(BUFFER_SIZE,sizeof(char));
-	strcpy(hangman,"man");
+        strcpy(hangman,"man");
         strcat(hangman,generate_man(wrong_guesses));
         write(client_socket, hangman, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, hangman);
@@ -112,11 +112,11 @@ void run_game(char * word, int client_socket) {
         //print the blank spaces for the word, with correct guesses filled in
         int i = 0;
         if (guessing_array[0] != 0) {
-	    strcpy(message, "guessing");
-	    strcat(message, guessing_array);
-	    write(client_socket,message,BUFFER_SIZE);
+            strcpy(message, "guessing");
+            strcat(message, guessing_array);
+            write(client_socket,message,BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
-	    message = zero_heap(message, BUFFER_SIZE);
+            message = zero_heap(message, BUFFER_SIZE);
             test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 2!");
@@ -148,11 +148,11 @@ void run_game(char * word, int client_socket) {
             //print the letters guessed already, if guesses were made
             i = 0;
             if (g) {
-		strcpy(message, "guessed");
-		strcat(message, guessed_letters);
-		write(client_socket,message,BUFFER_SIZE);
-		printf("[subserver %d] Sent %s\n", pid, message);
-		message = zero_heap(message, BUFFER_SIZE);
+                strcpy(message, "guessed");
+                strcat(message, guessed_letters);
+                write(client_socket,message,BUFFER_SIZE);
+                printf("[subserver %d] Sent %s\n", pid, message);
+                message = zero_heap(message, BUFFER_SIZE);
                 printf("[subserver %d] Sent %s\n", pid, guessed_letters);
                 test = read(client_socket, buffer, BUFFER_SIZE);
                 if (test == -1 || strcmp(buffer, ACK)) {
@@ -225,7 +225,7 @@ void run_game(char * word, int client_socket) {
         }
 
         //update guessed_letters array with new guess
-	guessed_letters[g] = letter;
+        guessed_letters[g] = letter;
         g++;
 
 
@@ -241,7 +241,7 @@ void run_game(char * word, int client_socket) {
         }
 
         //update wrong guess count if needed
-	// if t is 0, the letter guessed was not in the word
+        // if t is 0, the letter guessed was not in the word
         if (!t) {
             wrong_guesses++;
         }
@@ -257,7 +257,7 @@ void run_game(char * word, int client_socket) {
                 printf("Error 5.5!");
             }
             buffer = zero_heap(hangman, BUFFER_SIZE);
-            strcpy(message, "Sorry, you lose!");
+            strcpy(message, LOSE_MSG);
             write(client_socket, message, BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
             test = read(client_socket, buffer, BUFFER_SIZE);
@@ -270,7 +270,7 @@ void run_game(char * word, int client_socket) {
         }
     }
 
-    strcpy(message,"You win!");
+    strcpy(message, WIN_MSG);
     write(client_socket, message, BUFFER_SIZE);
     printf("[sever %d] Sent %s\n", pid, message);
     test = read(client_socket, buffer, BUFFER_SIZE);

@@ -2,6 +2,7 @@
 #include "sem.h"
 #include "sharedmem.h"
 #include "networking.h"
+#include "competitive_game.h"
 
 void get_status(int len, int client_socket){
     int pid = getpid();
@@ -78,10 +79,10 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     int i = 0;
     if (guessing_array[0] != 0) {
         strcpy(message, "guessing");
-	strcat(message, guessing_array);
-	write(client_socket,message,BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	message = zero_heap(message, BUFFER_SIZE);
+        strcat(message, guessing_array);
+        write(client_socket,message,BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        message = zero_heap(message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, guessing_array);
         test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
@@ -139,12 +140,12 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
         //print the letters guessed already, if guesses were made
         i = 0;
         if (g) {
-	    strcpy(message, "guessed");
-	    strcat(message, guessed_letters);
-	    write(client_socket,message,BUFFER_SIZE);
-	    printf("[subserver %d] Sent %s\n", pid, message);
-	    message = zero_heap(message, BUFFER_SIZE);
-	    printf("[subserver %d] Sent %s\n", pid, guessed_letters);
+            strcpy(message, "guessed");
+            strcat(message, guessed_letters);
+            write(client_socket,message,BUFFER_SIZE);
+            printf("[subserver %d] Sent %s\n", pid, message);
+            message = zero_heap(message, BUFFER_SIZE);
+            printf("[subserver %d] Sent %s\n", pid, guessed_letters);
             test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 3!");
@@ -253,10 +254,10 @@ int run_turn_competitive(int len,int *wrong_guessespointer, char* guessing_array
     i = 0;
     if (guessing_array[0] != 0) {
         strcpy(message, "guessing");
-	strcat(message, guessing_array);
-	write(client_socket,message,BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	message = zero_heap(message, BUFFER_SIZE);
+        strcat(message, guessing_array);
+        write(client_socket,message,BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        message = zero_heap(message, BUFFER_SIZE);
         printf("[subserver %d] Sent %s\n", pid, guessing_array);
         test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
@@ -439,7 +440,7 @@ void run_game_competitive(char* word, int client_socket){
 
             //its possible turnsemid wasn't incremented yet
             // its possible it was decremented by other client
-	    // before turn was ran
+            // before turn was ran
             turnsemval = view_sem(turnsemid);
             if(turnsemval == 0){
                 sleep(.1);
@@ -486,7 +487,7 @@ void run_game_competitive(char* word, int client_socket){
                 //means player is going again, update other player
                 if(won == -4){
                     increment_sem(turnsemid);
-		    //wait for other player to finish update
+                    //wait for other player to finish update
                     sleep(.8);
                 }
             }
@@ -496,7 +497,7 @@ void run_game_competitive(char* word, int client_socket){
             if (won == -2 || won == -3) {
                 increment_sem(competesemid);
                 increment_sem(turnsemid);
-		//wait for other player to know what happened
+                //wait for other player to know what happened
                 sleep(.5);
             }
             //for second player exiting turn early
