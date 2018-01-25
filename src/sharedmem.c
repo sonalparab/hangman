@@ -3,20 +3,20 @@
 int create_shm(int key){
     //create shared memory for size 20
     int shmid = shmget(key, (sizeof(char) * 20), IPC_CREAT | IPC_EXCL | 0600);
-    if(shmid == -1)
+    /*if(shmid == -1)
         printf("could not create shared memory: %s\n",strerror(errno));
     else
-        printf("shared memory created: %d\n",shmid);
+        printf("shared memory created: %d\n",shmid);*/
     return shmid;
 }
 
 int create_shm_int(int key){
     //create shared memory for ints
     int shmid = shmget(key, (sizeof(int)), IPC_CREAT | IPC_EXCL | 0600);
-    if(shmid == -1)
+    /*if(shmid == -1)
         printf("could not create shared memory: %s\n",strerror(errno));
     else
-        printf("shared memory created: %d\n",shmid);
+        printf("shared memory created: %d\n",shmid);*/
     return shmid;
 }
 
@@ -24,10 +24,10 @@ int create_shm_int(int key){
 int create_shm_array(int key){
     //create shared memory for size 26
     int shmid = shmget(key, (sizeof(char) * 26), IPC_CREAT | IPC_EXCL | 0600);
-    if(shmid == -1)
+    /*if(shmid == -1)
         printf("could not create shared memory: %s\n",strerror(errno));
     else
-        printf("shared memory created: %d\n",shmid);
+        printf("shared memory created: %d\n",shmid);*/
     return shmid;
 }
 
@@ -35,8 +35,9 @@ int create_shm_array(int key){
 void remove_shm(int shmid){
     //remove shared memory
     int s = shmctl(shmid,IPC_RMID,0);
-    if(s == -1)
-        printf("could not remove shared memory: %s\n",strerror(errno));
+    if(s == -1){
+        //printf("could not remove shared memory: %s\n",strerror(errno));
+    }
     else{
         printf("memory removed: %d\n", s);
     }

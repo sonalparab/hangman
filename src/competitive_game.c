@@ -393,7 +393,7 @@ void run_game_competitive(char* word, int client_socket){
     int semid = semget(KEY2,1,0600);
 
     int semval = view_sem(semid);
-    printf("semval is %d \n",semval);
+    //printf("semval is %d \n",semval);
 
     //blocking while semval is not 0
     // meaning there is not enough players
@@ -406,7 +406,7 @@ void run_game_competitive(char* word, int client_socket){
     int competesemid = create_sem(COMPETEKEY,1);
 
     if (competesemid == -1) {
-        printf("semaphore error: %s\n",strerror(errno));
+        //printf("semaphore error: %s\n",strerror(errno));
         //get the semid if already made
         competesemid = semget(COMPETEKEY,1,0600);
     }
@@ -415,12 +415,10 @@ void run_game_competitive(char* word, int client_socket){
     int turnsemid = create_sem(TURNKEY, 1);
 
     if (turnsemid == -1) {
-        printf("semaphore error: %s\n",strerror(errno));
+        //printf("semaphore error: %s\n",strerror(errno));
         //get the semid if already made
         turnsemid = semget(TURNKEY,1,0600);
     }
-
-    printf("TURNSEMVAL: %d\n",view_sem(turnsemid));
 
     int competesemval;
     int turnsemval;
@@ -450,7 +448,6 @@ void run_game_competitive(char* word, int client_socket){
             turnsemval = view_sem(turnsemid);
             if(turnsemval == 0){
                 sleep(.1);
-                printf("Waiting for increment\n");
                 increment_sem(turnsemid);
             }
 
@@ -493,8 +490,7 @@ void run_game_competitive(char* word, int client_socket){
 
                 //means player is going again, update other player
                 if(won == -4){
-                    increment_sem(turnsemid);
-                    //printf("TURNSEMVAL: %d\n",view_sem(turnsemid)); 
+                    increment_sem(turnsemid); 
                     sleep(.8);
                 }
             }
@@ -510,9 +506,7 @@ void run_game_competitive(char* word, int client_socket){
             if (won == -8 || won == -9) {
                 printf("Second client");
                 increment_sem(competesemid);
-                //sleep(.2);
                 increment_sem(turnsemid);
-                //remove_sem(turnsemid);
                 return;
             }
             if (won == -3) {
@@ -527,7 +521,6 @@ void run_game_competitive(char* word, int client_socket){
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
 
-                //
                 //wait for other client to finish
                 while(!view_sem(competesemid)){
                     sleep(.1);

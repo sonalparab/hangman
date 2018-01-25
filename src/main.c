@@ -21,7 +21,7 @@ static void sighandler(int signo){
 
         //if semid fails b/c doesn't exist
         if (semid == -1) {
-            printf("semaphore error: %s\n",strerror(errno));
+	  //printf("semaphore error: %s\n",strerror(errno));
         } else {
             remove_sem(semid);
         }
@@ -30,7 +30,7 @@ static void sighandler(int signo){
 
         //if semid fails b/c doesn't exist
         if (semid == -1) {
-            printf("semaphore error: %s\n",strerror(errno));
+	  //printf("semaphore error: %s\n",strerror(errno));
         } else {
             remove_sem(semid);
         }
@@ -40,7 +40,7 @@ static void sighandler(int signo){
 
         //if semid fails b/c doesn't exist
         if (semid == -1) {
-            printf("semaphore error: %s\n",strerror(errno));
+	  //printf("semaphore error: %s\n",strerror(errno));
         } else {
             remove_sem(semid);
         }
@@ -49,7 +49,7 @@ static void sighandler(int signo){
 
         //if semid fails b/c doesn't exist
         if (semid == -1) {
-            printf("semaphore error: %s\n",strerror(errno));
+	  //printf("semaphore error: %s\n",strerror(errno));
         } else {
             remove_sem(semid);
         }
@@ -58,7 +58,7 @@ static void sighandler(int signo){
 
         //if semid fails b/c doesn't exist
         if (semid == -1) {
-            printf("semaphore error: %s\n",strerror(errno));
+	  //printf("semaphore error: %s\n",strerror(errno));
         } else {
             remove_sem(semid);
         }
@@ -68,7 +68,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -77,7 +77,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -86,7 +86,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -95,7 +95,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -104,7 +104,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -114,7 +114,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -123,7 +123,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -132,7 +132,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -141,7 +141,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }
@@ -150,7 +150,7 @@ static void sighandler(int signo){
 
         //if shmid fails b/c doesn't exist
         if (shmid == -1) {
-            printf("sharedmem error: %s\n",strerror(errno));
+	  //printf("sharedmem error: %s\n",strerror(errno));
         } else {
             remove_shm(shmid);
         }

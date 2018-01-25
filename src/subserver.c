@@ -60,7 +60,7 @@ void subserver_collab(char * buffer, int client_socket) {
 
     //if semid fails b/c already created
     if (semid == -1) {
-        printf("semaphore error: %s\n",strerror(errno));
+        //printf("semaphore error: %s\n",strerror(errno));
         //get the semid
         semid = semget(KEY,1,0600);
     }
@@ -85,7 +85,7 @@ void subserver_competitive(char * buffer, int client_socket) {
 
     //if semid fails b/c already created
     if (semid == -1) {
-        printf("semaphore error: %s\n",strerror(errno));
+        //printf("semaphore error: %s\n",strerror(errno));
         //get the semid
         semid = semget(KEY2,1,0600);
     }
@@ -122,7 +122,7 @@ void process_collab(char * str, int client_socket) {
     while (1) {
 
         word = word_pick(list);
-        printf("Random word: %s\n", word);
+        //printf("Random word: %s\n", word);
 
         //save word to shared memory if needed
         int shmid = create_shm(COLLABKEY);
@@ -133,9 +133,7 @@ void process_collab(char * str, int client_socket) {
             set_shm(word,shmid);
         }
 
-        printf("SHMID: %d  ",shmid);
         char *sharedword = get_shm(shmid);
-        printf("Shared word is: %s  ",sharedword);
 
         run_game_collab(sharedword,client_socket);
         free(word);
@@ -151,7 +149,7 @@ void process_competitive(char * str, int client_socket) {
     while (1) {
 
         word = word_pick(list);
-        printf("Random word: %s\n", word);
+        //printf("Random word: %s\n", word);
 
         //save word to shared memory if needed
         int shmid = create_shm(COMPETEKEY);
@@ -162,9 +160,7 @@ void process_competitive(char * str, int client_socket) {
             set_shm(word,shmid);
         }
 
-        printf("SHMID: %d  ",shmid);
         char *sharedword = get_shm(shmid);
-        printf("Shared word is: %s  ",sharedword);
 
         run_game_competitive(sharedword,client_socket);
         free(word);

@@ -5,14 +5,15 @@ struct sembuf atomic_op;
 int create_sem(int key, int val){
     //Create semaphore
     semid = semget(key,1,IPC_CREAT | IPC_EXCL | 0600);
-    if(semid == -1)
-        printf("could not create semaphore: %s\n",strerror(errno));
+    if(semid == -1){
+      //printf("could not create semaphore: %s\n",strerror(errno));
+    }
     else{
         union semun su;
         su.val = val;
         int v = semctl(semid,0,SETVAL,su);
-        printf("semaphore created: %d\n",semid);
-        printf("value set: %d\n",v);
+        //printf("semaphore created: %d\n",semid);
+        //printf("value set: %d\n",v);
     }
     return semid;
 }
@@ -30,19 +31,17 @@ void remove_sem(int semid){
     //remove semaphore
     v = semctl(semid,0,IPC_RMID);
     if(v == -1)
-        printf("could not remove semaphore: %s\n",strerror(errno));
+      printf("could not remove semaphore: %s\n",strerror(errno));
     else
-        printf("semaphore removed: %d \n",v);   
+      printf("semaphore removed: %d \n",v);   
 }
 
 
 int view_sem(int semid){
     //Viewing
-    //semid = semget(KEY,amt,0600);
     int v = semctl(semid,0,GETVAL);
     if(v == -1)
         printf("%s\n",strerror(errno));
-    //else
     //printf("semaphore value: %d\n",v);
     return v;
 }

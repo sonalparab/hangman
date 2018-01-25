@@ -351,7 +351,7 @@ void run_game_collab(char* word, int client_socket){
     int semid = semget(KEY,1,0600);
 
     int semval = view_sem(semid);
-    printf("semval is %d \n",semval);
+    //printf("semval is %d \n",semval);
 
     //blocking while semval is not 0
     // meaning there is not enough players
@@ -364,7 +364,7 @@ void run_game_collab(char* word, int client_socket){
     int collabsemid = create_sem(COLLABKEY,1);
 
     if (collabsemid == -1) {
-        printf("semaphore error: %s\n",strerror(errno));
+        //printf("semaphore error: %s\n",strerror(errno));
         //get the semid if already made
         collabsemid = semget(COLLABKEY,1,0600);
     }
@@ -441,7 +441,6 @@ void run_game_collab(char* word, int client_socket){
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
 
-                //remove_sem(turnsemid);
                 //wait for other client to finish
                 while(!view_sem(collabsemid)){
                     sleep(.1);
@@ -463,7 +462,6 @@ void run_game_collab(char* word, int client_socket){
                 }
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
-                //remove_sem(turnsemid);
 
                 //wait for other client to finish
                 while(!view_sem(collabsemid)){
