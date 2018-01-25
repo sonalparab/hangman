@@ -11,149 +11,7 @@
 static void sighandler(int signo){
     //to remove the semaphore for now
     if (signo == SIGINT) {
-        remove("WKP");
-
-        free_list();
-
-        //remove semaphores used for player connection
-        int semid = semget(KEY,1,0600);
-
-        //if semid fails b/c doesn't exist
-        if (semid == -1) {
-	  //printf("semaphore error: %s\n",strerror(errno));
-        } else {
-            remove_sem(semid);
-        }
-
-        semid = semget(KEY2,1,0600);
-
-        //if semid fails b/c doesn't exist
-        if (semid == -1) {
-	  //printf("semaphore error: %s\n",strerror(errno));
-        } else {
-            remove_sem(semid);
-        }
-
-        //remove sempahores used for turn taking in games
-        semid = semget(COLLABKEY,1,0600);
-
-        //if semid fails b/c doesn't exist
-        if (semid == -1) {
-	  //printf("semaphore error: %s\n",strerror(errno));
-        } else {
-            remove_sem(semid);
-        }
-
-        semid = semget(COMPETEKEY,1,0600);
-
-        //if semid fails b/c doesn't exist
-        if (semid == -1) {
-	  //printf("semaphore error: %s\n",strerror(errno));
-        } else {
-            remove_sem(semid);
-        }
-
-        semid = semget(TURNKEY,1,0600);
-
-        //if semid fails b/c doesn't exist
-        if (semid == -1) {
-	  //printf("semaphore error: %s\n",strerror(errno));
-        } else {
-            remove_sem(semid);
-        }
-
-        //remove collab mode memory
-        int shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(G_KEY, (sizeof(int)),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        //remove competitive mode memory
-        shmid = shmget(COMPETEKEY, (sizeof(char) * 20),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
-        shmid = shmget(G_KEY2, (sizeof(int)),0600);
-
-        //if shmid fails b/c doesn't exist
-        if (shmid == -1) {
-	  //printf("sharedmem error: %s\n",strerror(errno));
-        } else {
-            remove_shm(shmid);
-        }
-
+        clean();
         exit(0);
     }
 }
@@ -207,4 +65,149 @@ void free_list() {
         free(list[i]);
     }
     free(list);
+}
+
+void clean() {
+    remove("WKP");
+
+    free_list();
+
+    //remove semaphores used for player connection
+    int semid = semget(KEY,1,0600);
+
+    //if semid fails b/c doesn't exist
+    if (semid == -1) {
+        //printf("semaphore error: %s\n",strerror(errno));
+    } else {
+        remove_sem(semid);
+    }
+
+    semid = semget(KEY2,1,0600);
+
+    //if semid fails b/c doesn't exist
+    if (semid == -1) {
+        //printf("semaphore error: %s\n",strerror(errno));
+    } else {
+        remove_sem(semid);
+    }
+
+    //remove sempahores used for turn taking in games
+    semid = semget(COLLABKEY,1,0600);
+
+    //if semid fails b/c doesn't exist
+    if (semid == -1) {
+        //printf("semaphore error: %s\n",strerror(errno));
+    } else {
+        remove_sem(semid);
+    }
+
+    semid = semget(COMPETEKEY,1,0600);
+
+    //if semid fails b/c doesn't exist
+    if (semid == -1) {
+        //printf("semaphore error: %s\n",strerror(errno));
+    } else {
+        remove_sem(semid);
+    }
+
+    semid = semget(TURNKEY,1,0600);
+
+    //if semid fails b/c doesn't exist
+    if (semid == -1) {
+        //printf("semaphore error: %s\n",strerror(errno));
+    } else {
+        remove_sem(semid);
+    }
+
+    //remove collab mode memory
+    int shmid = shmget(COLLABKEY, (sizeof(char) * 20),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(GUESSING_ARRAY_KEY, (sizeof(char) * 20),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(GUESSED_LETTER_KEY, (sizeof(char) * 26),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(WRONG_GUESSES_KEY, (sizeof(int)),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(G_KEY, (sizeof(int)),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    //remove competitive mode memory
+    shmid = shmget(COMPETEKEY, (sizeof(char) * 20),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(GUESSING_ARRAY_KEY2, (sizeof(char) * 20),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(GUESSED_LETTER_KEY2, (sizeof(char) * 26),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(WRONG_GUESSES_KEY2, (sizeof(int)),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
+
+    shmid = shmget(G_KEY2, (sizeof(int)),0600);
+
+    //if shmid fails b/c doesn't exist
+    if (shmid == -1) {
+        //printf("sharedmem error: %s\n",strerror(errno));
+    } else {
+        remove_shm(shmid);
+    }
 }

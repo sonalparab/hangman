@@ -14,7 +14,7 @@
 #define MAXDICTLENGTH 80000
 
 // for use in testing
-/* #define DICTLOCATION "../testdict" */
+/* #define DICTLOCATION "testdict" */
 /* #define MAXDICTLENGTH 10 */
 
 #define MAXWORDLENGTH 20

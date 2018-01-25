@@ -44,6 +44,9 @@ char ** wordlist() {
 
 char * word_pick(char ** list) {
     int len = wordlist_len(list);
+    if (len < 1) {
+        return NULL;
+    }
     int index = rand() % len;
     char *rand_word = (char *) malloc(sizeof(char) * MAXWORDLENGTH);
     strcpy(rand_word, list[index]);

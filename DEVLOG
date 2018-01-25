@@ -95,3 +95,7 @@ yeH -- 2018-01-25 11:50
 **************************
 Signal handling to prevent client from exiting during a game
     * Nevermind this introduced a whole host of problems.
+
+yeH -- 2018-01-25 1:50
+**************************
+Handle when a subserver runs out of words. (Just quits the subserver.)
