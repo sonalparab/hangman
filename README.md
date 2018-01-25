@@ -76,3 +76,4 @@ Replace `127.0.0.1` with the server's IPv4 address.
 * When playing in a multiplayer mode, when you input to stdin while it isn't your turn, it reads it as the next input for when it is your turn.
 * The word prints in the server (this was intentional to ease testing).
 * There is a limit of about 60,000 words a subserver has before running out (tried to handle this but led to server socket still being in use so is not handled). So essentially if you play too much the game probably breaks.
+* Client leaks memory.
