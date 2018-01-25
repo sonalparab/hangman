@@ -12,6 +12,16 @@ static void sighandler(int signo) {
     exit(0);
 }
 
+char * substring(char * str, int n){
+    char * ans = (char *) calloc(n + 1,sizeof(char));
+    int i;
+    for(i = 0; i < n; i++){
+        ans[i] = str[i];
+    }
+    ans[i] = 0;
+    return ans;
+}
+
 int main(int argc, char **argv) {
 
     signal(SIGINT, sighandler);
@@ -30,6 +40,10 @@ int main(int argc, char **argv) {
 
     while (read(server_socket, buffer, BUFFER_SIZE)) {
         if (strcmp(buffer, MODE_PROMPT) == 0) {
+	    printf("Game modes:\n");
+	    printf("Pick 1 for single player\n");
+	    printf("Pick 2 for collab mode\n");
+	    printf("Pick 3 for competitive mode\n");
             printf(MODE_PROMPT);
             fgets(mode, sizeof(mode), stdin);
             *strchr(mode, '\n') = 0;
@@ -47,9 +61,38 @@ int main(int argc, char **argv) {
              write(server_socket, buffer, BUFFER_SIZE);
              printf("[client] wrote input: [%s]\n", buffer);
              */
+        } else if (strcmp(substring(buffer,3), "man") == 0){
+            /* *strchr(buffer, '\n') = 0; */
+	    
+            char * man = (char *) calloc(BUFFER_SIZE,sizeof(char));
+	    strncpy(man, buffer + 3, BUFFER_SIZE - 3);
+	    printf("%s\n", man);
+            strcpy(buffer, ACK);
+            write(server_socket, buffer, BUFFER_SIZE);
+        } else if (strcmp(substring(buffer,8), "guessing") == 0){
+            /* *strchr(buffer, '\n') = 0; */
+	    
+            char * guessing = (char *) calloc(BUFFER_SIZE,sizeof(char));
+	    strncpy(guessing, buffer + 8, BUFFER_SIZE - 8);
+	    printf("word: %s\n", guessing);
+            strcpy(buffer, ACK);
+            write(server_socket, buffer, BUFFER_SIZE);
+        } else if (strcmp(substring(buffer,7), "guessed") == 0){
+            /* *strchr(buffer, '\n') = 0; */
+	    
+            char * guessed = (char *) calloc(BUFFER_SIZE,sizeof(char));
+	    strncpy(guessed, buffer + 7, BUFFER_SIZE - 7);
+	    printf("guessed letters: ");
+	    int i;
+	    for(i = 0; i < 26; i++){
+	      printf("%c ",guessed[i]);
+	    }
+	    printf("\n");
+            strcpy(buffer, ACK);
+            write(server_socket, buffer, BUFFER_SIZE);
         } else {
             /* *strchr(buffer, '\n') = 0; */
-            printf("received: [%s]\n", buffer);
+            printf("%s\n", buffer);
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
         }
