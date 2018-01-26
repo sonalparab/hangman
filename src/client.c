@@ -36,6 +36,8 @@ int main(int argc, char **argv) {
     buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
     char input[100];
     char mode[10];
+    char *sub;
+    int free_ = 0;
 
     while (read(server_socket, buffer, BUFFER_SIZE)) {
         if (strcmp(buffer, MODE_PROMPT) == 0) {
@@ -53,7 +55,8 @@ int main(int argc, char **argv) {
             fgets(input, sizeof(input), stdin);
             *strchr(input, '\n') = 0;
             write(server_socket, input, sizeof(input));
-        } else if (strcmp(substring(buffer,3), "man") == 0){
+        } else if (strcmp(sub = substring(buffer,3), "man") == 0){
+            free_ = 1;
             //for printing the man
             char * man = (char *) calloc(BUFFER_SIZE,sizeof(char));
             strncpy(man, buffer + 3, BUFFER_SIZE - 3);
@@ -62,7 +65,8 @@ int main(int argc, char **argv) {
 
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
-        } else if (strcmp(substring(buffer,8), "guessing") == 0){
+        } else if (strcmp(sub = substring(buffer,8), "guessing") == 0){
+            free_ = 1;
             //for printing the guessing array
             char * guessing = (char *) calloc(BUFFER_SIZE,sizeof(char));
             strncpy(guessing, buffer + 8, BUFFER_SIZE - 8);
@@ -71,7 +75,8 @@ int main(int argc, char **argv) {
 
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
-        } else if (strcmp(substring(buffer,7), "guessed") == 0){
+        } else if (strcmp(sub = substring(buffer,7), "guessed") == 0){
+            free_ = 1;
             //for printing the guessed letters
             char * guessed = (char *) calloc(BUFFER_SIZE,sizeof(char));
             strncpy(guessed, buffer + 7, BUFFER_SIZE - 7);
@@ -86,10 +91,16 @@ int main(int argc, char **argv) {
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
         } else {
+            free_ = 1;
             printf("%s\n", buffer);
 
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
+        }
+        // If sub was set (meaning something was calloc'd) free it
+        if (free_) {
+            free(sub);
+            free_ = 0;
         }
         input[0] = 0;
         buffer = zero_heap(buffer, BUFFER_SIZE);
