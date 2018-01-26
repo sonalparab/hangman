@@ -41,10 +41,10 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     int i = 0;
     if (guessing_array[0] != 0) {
         strcpy(message, "guessing");
-	strcat(message, guessing_array);
-	write(client_socket,message,BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	message = zero_heap(message, BUFFER_SIZE);
+        strcat(message, guessing_array);
+        write(client_socket,message,BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        message = zero_heap(message, BUFFER_SIZE);
         test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
@@ -102,11 +102,11 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         //print the letters guessed already, if guesses were made
         i = 0;
         if (g) {
-	    strcpy(message, "guessed");
-	    strcat(message, guessed_letters);
-	    write(client_socket,message,BUFFER_SIZE);
-	    printf("[subserver %d] Sent %s\n", pid, message);
-	    message = zero_heap(message, BUFFER_SIZE);
+            strcpy(message, "guessed");
+            strcat(message, guessed_letters);
+            write(client_socket,message,BUFFER_SIZE);
+            printf("[subserver %d] Sent %s\n", pid, message);
+            message = zero_heap(message, BUFFER_SIZE);
             test = read(client_socket, buffer, BUFFER_SIZE);
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 3!");
@@ -217,10 +217,10 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
     i = 0;
     if (guessing_array[0] != 0) {
         strcpy(message, "guessing");
-	strcat(message, guessing_array);
-	write(client_socket,message,BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	message = zero_heap(message, BUFFER_SIZE);
+        strcat(message, guessing_array);
+        write(client_socket,message,BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        message = zero_heap(message, BUFFER_SIZE);
         test = read(client_socket, buffer, BUFFER_SIZE);
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 2!");
@@ -410,7 +410,7 @@ void run_game_collab(char* word, int client_socket){
             // this allows other player to know what happened
             if (won == -2 || won == -3) {
                 increment_sem(collabsemid);
-		//wait for the other player to know what happened
+                //wait for the other player to know what happened
                 sleep(.3);
             }
             //for second player exiting turn early

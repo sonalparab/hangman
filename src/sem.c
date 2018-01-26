@@ -5,7 +5,7 @@ struct sembuf atomic_op;
 int create_sem(int key, int val){
     semid = semget(key,1,IPC_CREAT | IPC_EXCL | 0600);
     if(semid == -1){
-      //printf("could not create semaphore: %s\n",strerror(errno));
+        //printf("could not create semaphore: %s\n",strerror(errno));
     }
     else{
         union semun su;
@@ -25,9 +25,9 @@ void remove_sem(int semid){
     //remove semaphore
     v = semctl(semid,0,IPC_RMID);
     if(v == -1)
-      printf("could not remove semaphore: %s\n",strerror(errno));
+        printf("could not remove semaphore: %s\n",strerror(errno));
     else
-      printf("semaphore removed: %d \n",v);   
+        printf("semaphore removed: %d \n",v);   
 }
 
 
