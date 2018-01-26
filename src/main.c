@@ -67,10 +67,33 @@ void free_list() {
     free(list);
 }
 
+void free_mems() {
+    if (free_message) {
+        free(message);
+        free_message = 0;
+    }
+
+    if (free_g_buffer) {
+        free(buffer);
+        free_g_buffer = 0;
+    }
+
+    if (free_guessing_array) {
+        free(guessing_array);
+        free_guessing_array = 0;
+    }
+
+    if (free_guessed_letters) {
+        free(guessed_letters);
+        free_guessed_letters = 0;
+    }
+}
+
 void clean() {
     remove("WKP");
 
     free_list();
+    free_mems();
 
     //remove semaphores used for player connection
     int semid = semget(KEY,1,0600);

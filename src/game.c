@@ -2,6 +2,8 @@
 #include "sem.h"
 #include "sharedmem.h"
 #include "networking.h"
+#include "client.h"
+#include "main.h"
 
 char * blank_array(int length){
     char * array = calloc(length,sizeof(char));
@@ -77,13 +79,15 @@ void run_game(char * word, int client_socket) {
     int wrong_guesses = 0;
     int len = strlen(word);
     //array for guessing the word, intially blank
-    char * guessing_array = blank_array(len);
+    guessing_array = blank_array(len);
+    free_guessing_array = 1;
     //input (guess) with potentially multiple characters and newline
     char input[100];
     //letter guessed
     char letter;
     //array and counter for guessed letters
-    char * guessed_letters = calloc(26,sizeof(char));
+    guessed_letters = calloc(26,sizeof(char));
+    free_guessed_letters = 1;
     //guessed_letters array index
     int g = 0;
     // string containing hang man
@@ -91,8 +95,10 @@ void run_game(char * word, int client_socket) {
     // to send number of wrong guesses
     char * man;
     // for messages to be sent to client
-    char * message = (char *) calloc(BUFFER_SIZE, sizeof(char));
-    char * buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
+    message = (char *) calloc(BUFFER_SIZE, sizeof(char));
+    free_message = 1;
+    buffer = (char *) calloc (BUFFER_SIZE, sizeof(char));
+    free_g_buffer = 1;
     int test;
     printf("[subserver %d] running game...\n", pid);
     while (1) {
@@ -107,7 +113,7 @@ void run_game(char * word, int client_socket) {
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 0.5!");
         }
-        hangman = zero_heap(hangman, BUFFER_SIZE);
+        free(hangman);
         buffer = zero_heap(buffer, BUFFER_SIZE);
 
         //print the blank spaces for the word, with correct guesses filled in
@@ -266,6 +272,7 @@ void run_game(char * word, int client_socket) {
             }
             buffer = zero_heap(buffer, BUFFER_SIZE);
             message = zero_heap(message, BUFFER_SIZE);
+            free_mems();
             return;
         }
     }
@@ -279,6 +286,7 @@ void run_game(char * word, int client_socket) {
     }
     buffer = zero_heap(buffer, BUFFER_SIZE);
     message = zero_heap(message, BUFFER_SIZE);
+    free_mems();
     return;
 }
 
