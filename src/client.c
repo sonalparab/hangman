@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
             char * man = (char *) calloc(BUFFER_SIZE,sizeof(char));
             strncpy(man, buffer + 3, BUFFER_SIZE - 3);
             printf("%s\n", man);
-            man = zero_heap(man, BUFFER_SIZE);
+            free(man);
 
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
             char * guessing = (char *) calloc(BUFFER_SIZE,sizeof(char));
             strncpy(guessing, buffer + 8, BUFFER_SIZE - 8);
             printf("word: %s\n", guessing);
-            guessing = zero_heap(guessing, BUFFER_SIZE);
+            free(guessing);
 
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);
@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
                 printf("%c ",guessed[i]);
             }
             printf("\n");
-            guessed = zero_heap(guessed, BUFFER_SIZE);
+            free(guessed);
 
             strcpy(buffer, ACK);
             write(server_socket, buffer, BUFFER_SIZE);

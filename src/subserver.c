@@ -145,6 +145,7 @@ void process_collab(char * str, int client_socket) {
 
         run_game_collab(sharedword,client_socket);
         free(word);
+        free(sharedword);
         remove_shm(shmid);
         printf("new len: %d\n", wordlist_len(list));
     }
@@ -178,6 +179,7 @@ void process_competitive(char * str, int client_socket) {
 
         run_game_competitive(sharedword,client_socket);
         free(word);
+        free(sharedword);
         remove_shm(shmid);
         printf("new len: %d\n", wordlist_len(list));
     }

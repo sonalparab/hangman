@@ -107,7 +107,7 @@ void run_game(char * word, int client_socket) {
         if (test == -1 || strcmp(buffer, ACK)) {
             printf("Error 0.5!");
         }
-        hangman = zero_heap(hangman, BUFFER_SIZE);
+        free(hangman);
         buffer = zero_heap(buffer, BUFFER_SIZE);
 
         //print the blank spaces for the word, with correct guesses filled in
@@ -256,7 +256,8 @@ void run_game(char * word, int client_socket) {
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 5.5!");
             }
-            buffer = zero_heap(hangman, BUFFER_SIZE);
+            free(hangman);
+            buffer = zero_heap(buffer, BUFFER_SIZE);
             strcpy(message, "Sorry, you lose!");
             write(client_socket, message, BUFFER_SIZE);
             printf("[subserver %d] Sent %s\n", pid, message);
@@ -264,8 +265,10 @@ void run_game(char * word, int client_socket) {
             if (test == -1 || strcmp(buffer, ACK)) {
                 printf("Error 6!");
             }
-            buffer = zero_heap(buffer, BUFFER_SIZE);
-            message = zero_heap(message, BUFFER_SIZE);
+            free(buffer);
+            free(message);
+            free(guessing_array);
+            free(guessed_letters);
             return;
         }
     }
@@ -277,8 +280,10 @@ void run_game(char * word, int client_socket) {
     if (test == -1 || strcmp(buffer, ACK)) {
         printf("Error 7!");
     }
-    buffer = zero_heap(buffer, BUFFER_SIZE);
-    message = zero_heap(message, BUFFER_SIZE);
+    free(buffer);
+    free(message);
+    free(guessing_array);
+    free(guessed_letters);
     return;
 }
 
