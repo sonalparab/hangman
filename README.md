@@ -25,8 +25,8 @@ If there is another cilent waiting, you will automatically join that game.
 If a player guesses a letter right, they will get to go again.
 If not, the other player is given a chance to guess a letter.
 This continues until the word is guessed or the man is hanged.
-The player to guess the last letter correctly wins. (And their opponent loses)
-The player who guesses the letter that hangs the man loses. (And their opponent wins)
+The player to guess the last letter in the word correctly wins (And their opponent loses).
+The player who guesses the letter that hangs the man loses (And their opponent wins).
 
 ## Instructions
 
