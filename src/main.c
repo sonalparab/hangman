@@ -14,11 +14,21 @@ static void sighandler(int signo){
         clean();
         exit(0);
     }
+
+    if (signo == SIGPIPE) {
+        free_list();
+        exit(0);
+    }
 }
 
 int main() {
 
     signal(SIGINT, sighandler);
+    signal(SIGPIPE, sighandler);
+
+    int listen_socket;
+    int f;
+    listen_socket = server_setup();
 
     list = wordlist();
     if (list == NULL) {
@@ -37,10 +47,6 @@ int main() {
 
     // Count the number of available words
     printf("len: %d\n", wordlist_len(list));
-    int listen_socket;
-    int f;
-    listen_socket = server_setup();
-
 
     while (1) {
         int client_socket = server_connect(listen_socket);

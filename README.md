@@ -75,5 +75,5 @@ Replace `127.0.0.1` with the server's IPv4 address.
 * Some words in the dictionary have special unicode characters such as é that we don't accept.
 * When playing in a multiplayer mode, when you input to stdin while it isn't your turn, it reads it as the next input for when it is your turn.
 * The word prints in the server (this was intentional to ease testing).
-* Client leaks memory.
+* There are memory leaks in the subserver (when the client quits) and the client.
 * When you run out of words (although there are about 60,000 words per subserver), and then you quit the main server, you have to wait ~1 minute before the port is no longer in use and run the server again.
