@@ -139,19 +139,7 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         //update k because a guess was made
         k = 0;
 
-        if (letter == ' '){
-	    strcpy(message,"A space is not a letter");
-	    write(client_socket, message, BUFFER_SIZE);
-	    printf("[subserver %d] Sent %s\n", pid, message);
-	    test = read(client_socket, buffer, BUFFER_SIZE);
-	    if (test == -1 || strcmp(buffer, ACK)) {
-	      printf("Error 3.5!");
-	    }
-	    buffer = zero_heap(buffer, BUFFER_SIZE);
-                message = zero_heap(message, BUFFER_SIZE);
-		k = 1;
-	    }
-	    else if (letter == NULL){
+        if (letter == NULL){
 	        strcpy(message,"An empty character is not a letter");
                 write(client_socket, message, BUFFER_SIZE);
                 printf("[subserver %d] Sent %s\n", pid, message);
@@ -164,9 +152,9 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 		k = 1;
 	    }
 
-	    if(!k){
+	    
 	        //if the character inputted was uppercase
-	        if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL) {
+	    else if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZ",letter) != NULL) {
 		    strcpy(message,"Please input a lowercase letter next time");
 		    write(client_socket, message, BUFFER_SIZE);
 		    printf("[subserver %d] Sent %s\n", pid, message);
@@ -193,26 +181,27 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
 		    message = zero_heap(message, BUFFER_SIZE);
 		    k = 1;
 		}
-        } else {
-            i = 0;
-            for (;i < g;i++) {
-                //if the letter was already guessed
-                // set k to 1 to prompt guess again
-                if (guessed_letters[i] == letter) {
-                    k = 1;
-                    strcpy(message,"Letter was previously guessed. Guess again.");
-                    write(client_socket, message, BUFFER_SIZE);
-                    printf("[subserver %d] Sent %s\n", pid, message);
-                    test = read(client_socket, buffer, BUFFER_SIZE);
-                    if (test == -1 || strcmp(buffer, ACK)) {
-                        printf("Error lost count");
+	     else{
+                i = 0;
+                for (;i < g;i++) {
+                    //if the letter was already guessed
+                    // set k to 1 to prompt guess again
+                    if (guessed_letters[i] == letter) {
+                        k = 1;
+                        strcpy(message,"Letter was previously guessed. Guess again.");
+                        write(client_socket, message, BUFFER_SIZE);
+                        printf("[subserver %d] Sent %s\n", pid, message);
+                        test = read(client_socket, buffer, BUFFER_SIZE);
+                        if (test == -1 || strcmp(buffer, ACK)) {
+                            printf("Error lost count");
+                        }
+                        buffer = zero_heap(buffer, BUFFER_SIZE);
+                        message = zero_heap(message, BUFFER_SIZE);
                     }
-                    buffer = zero_heap(buffer, BUFFER_SIZE);
-                    message = zero_heap(message, BUFFER_SIZE);
                 }
             }
-        }
-    }
+	}
+        
 
     //update guessed_letters array with new guess
     guessed_letters[g] = letter;
