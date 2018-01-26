@@ -74,7 +74,7 @@ Replace `127.0.0.1` with the server's IPv4 address.
 * Client can quit at anytime (Tried signal handler to fix this, but introduced a lot of problems.) However, if playing collab or competitive mode, the player who didn't leave can finish that game, but must wait for another client to connect with the same mode before a new game is started.
 * Some words in the dictionary have special unicode characters such as é that we don't accept.
 * When playing in a multiplayer mode, if you input to stdin while it isn't your turn, it reads this as the next input for when it is your turn.
-* The word (and many other messages) print in the server (this was intentional to ease testing).
+* The word (and many other messages) prints in the server when a game starts (this was intentional to ease testing).
 * There are memory leaks in the subserver (when the client quits) and the client.
 * When you run out of words (although there are about 60,000 words per subserver), and then you quit the main server, you have to wait ~1 minute before the port is no longer in use and run the server again.
 * Because shared memory isn't cleared until the server quits, when both clients in a multiplayer game quit and two new ones join, the old game will continue.
