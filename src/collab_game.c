@@ -92,16 +92,16 @@ int run_turn_collab(int len,int *wrong_guessespointer, char* guessing_array, cha
         }
         buffer = zero_heap(buffer, BUFFER_SIZE);
         message = zero_heap(message, BUFFER_SIZE);
-	strcpy(message,"The word was: ");
-	strcat(message,word);
-	write(client_socket, message, BUFFER_SIZE);
-	printf("[subserver %d] Sent %s\n", pid, message);
-	test = read(client_socket, buffer, BUFFER_SIZE);
-	if (test == -1 || strcmp(buffer, ACK)) {
-	    printf("Error 11!");
-	}
-	buffer = zero_heap(buffer, BUFFER_SIZE);
-	message = zero_heap(message, BUFFER_SIZE);
+        strcpy(message,"The word was: ");
+        strcat(message,word);
+        write(client_socket, message, BUFFER_SIZE);
+        printf("[subserver %d] Sent %s\n", pid, message);
+        test = read(client_socket, buffer, BUFFER_SIZE);
+        if (test == -1 || strcmp(buffer, ACK)) {
+            printf("Error 11!");
+        }
+        buffer = zero_heap(buffer, BUFFER_SIZE);
+        message = zero_heap(message, BUFFER_SIZE);
         return -9;
     }
 
@@ -439,16 +439,16 @@ void run_game_collab(char* word, int client_socket){
                 }
                 buffer = zero_heap(buffer, BUFFER_SIZE);
                 message = zero_heap(message, BUFFER_SIZE);
-		strcpy(message,"The word was: ");
-		strcat(message,word);
-		write(client_socket, message, BUFFER_SIZE);
-		printf("[subserver %d] Sent %s\n", pid, message);
-		test = read(client_socket, buffer, BUFFER_SIZE);
-		if (test == -1 || strcmp(buffer, ACK)) {
-		    printf("Error 11!");
-		}
-		buffer = zero_heap(buffer, BUFFER_SIZE);
-		message = zero_heap(message, BUFFER_SIZE);
+                strcpy(message,"The word was: ");
+                strcat(message,word);
+                write(client_socket, message, BUFFER_SIZE);
+                printf("[subserver %d] Sent %s\n", pid, message);
+                test = read(client_socket, buffer, BUFFER_SIZE);
+                if (test == -1 || strcmp(buffer, ACK)) {
+                    printf("Error 11!");
+                }
+                buffer = zero_heap(buffer, BUFFER_SIZE);
+                message = zero_heap(message, BUFFER_SIZE);
 
                 //wait for other client to finish
                 while(!view_sem(collabsemid)){
