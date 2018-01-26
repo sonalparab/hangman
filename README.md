@@ -77,3 +77,5 @@ Replace `127.0.0.1` with the server's IPv4 address.
 * The word prints in the server (this was intentional to ease testing).
 * There are memory leaks in the subserver (when the client quits) and the client.
 * When you run out of words (although there are about 60,000 words per subserver), and then you quit the main server, you have to wait ~1 minute before the port is no longer in use and run the server again.
+* Because shared memory isn't cleared until the server quits, when both clients in a multiplayer game quit and two new ones join, the old game will continue.
+* Quitting the server while a multiplayer game is running leads to problems. (We recommend running `pkill -9 server` when this happens. Or just avoid it altogether by quitting the clients before quitting the server.)
