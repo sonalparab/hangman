@@ -16,14 +16,17 @@ The game will begin, and you can play for as long as you want.
 
 To play cooperatively with another player, run the client and enter `2` as the game mode.
 If there is another client waiting, you will automatically join that game.
-Turns will alternate until you win or lose.
+Turns will alternate until the team wins or loses.
 
 ### Competitive
 
 To play competitively with another player, run the client and enter `3` as the game mode.
 If there is another cilent waiting, you will automatically join that game.
 If a player guesses a letter right, they will get to go again.
-If not, the other player guesses until the word is guessed or the man is hanged.
+If not, the other player is given a chance to guess a letter.
+This continues until the word is guessed or the man is hanged.
+The player to guess the last letter correctly wins. (And their opponent loses)
+The player who guesses the letter that hangs the man loses. (And their opponent wins)
 
 ## Instructions
 
