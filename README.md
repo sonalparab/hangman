@@ -3,8 +3,8 @@
 This is hangman in the terminal, with networking to support multiplayer options.
 There are 3 modes of play:
 * Single-player
-* Cooperative
-* Competitive
+* Cooperative (2 players)
+* Competitive (2 players)
 
 ### Single-player
 
